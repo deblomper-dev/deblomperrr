@@ -117,7 +117,7 @@ export async function POST(req: NextRequest) {
     const EMAIL_API_URL = process.env.EMAIL_API_URL || "https://mails.nubcoders.com/api/emails/send-api";
     const EMAIL_API_KEY = process.env.EMAIL_API_KEY || "";
     const EMAIL_FROM = process.env.EMAIL_FROM || "contact@deblomper.dev";
-    const EMAIL_TO = process.env.EMAIL_TO || "contact@nubcoder.dev";
+    const EMAIL_TO = process.env.EMAIL_TO || "contact@deblomper.dev";
 
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), EMAIL_TIMEOUT_MS);

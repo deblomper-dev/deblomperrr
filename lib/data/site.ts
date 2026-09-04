@@ -8,7 +8,7 @@ export const site = {
   role: "Full-stack developer",
   /** Verbatim from the GitHub profile that sources this site. */
   bio: "Full-stack developer • TypeScript, Python, Docker • Building Telegram bots, deployment platforms, and self-hosted services",
-  email: "contact@nubcoder.dev",
+  email: "contact@deblomper.dev",
   workAccount: "https://github.com/nub-coders",
   /** GitHub account created 2020-10-16. */
   publishingSince: "2020",
@@ -76,7 +76,7 @@ export const about = [
 ] as const;
 
 export const contactLinks: ContactLink[] = [
-  { label: "Email", value: "contact@nubcoder.dev", href: "mailto:contact@nubcoder.dev" },
+  { label: "Email", value: "contact@deblomper.dev", href: "mailto:contact@deblomper.dev" },
   { label: "GitHub", value: "github.com/deblomperr", href: "https://github.com/deblomperr" },
   { label: "Work account", value: "github.com/nub-coders", href: "https://github.com/nub-coders" },
   { label: "Telegram", value: "@nub_coder_s", href: "https://t.me/nub_coder_s" },

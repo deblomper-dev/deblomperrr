@@ -233,10 +233,10 @@ export function ContactForm() {
           <p className="mt-1 text-ink-muted">
             Or reach out directly at{" "}
             <a
-              href="mailto:contact@nubcoder.dev"
+              href="mailto:contact@deblomper.dev"
               className="font-medium text-ink underline transition-opacity hover:opacity-80"
             >
-              contact@nubcoder.dev
+              contact@deblomper.dev
             </a>
           </p>
         </div>
