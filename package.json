@@ -8,7 +8,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "npx -y tsx --test lib/rate-limiter.test.ts"
+    "test": "npx -y tsx --test lib/rate-limiter.test.ts lib/github/github.test.ts"
   },
   "dependencies": {
     "next": "16.3.4",

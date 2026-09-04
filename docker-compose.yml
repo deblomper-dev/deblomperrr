@@ -16,6 +16,8 @@ services:
       - EMAIL_TO=${EMAIL_TO:-contact@nubcoder.dev}
       - NEXT_PUBLIC_TURNSTILE_SITE_KEY=${NEXT_PUBLIC_TURNSTILE_SITE_KEY}
       - TURNSTILE_SECRET_KEY=${TURNSTILE_SECRET_KEY}
+      - GITHUB_TOKEN=${GITHUB_TOKEN}
+      - GITHUB_USERNAME=${GITHUB_USERNAME:-nub-coders}
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.deblomperr-portfolio.rule=Host(`${VIRTUAL_HOST:-deblomper.dev}`)"
