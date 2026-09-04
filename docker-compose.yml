@@ -1,0 +1,39 @@
+services:
+  app:
+    container_name: deblomperr-portfolio
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    env_file:
+      - .env
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - EMAIL_API_URL=${EMAIL_API_URL:-https://mails.nubcoders.com/api/emails/send-api}
+      - EMAIL_API_KEY=${EMAIL_API_KEY}
+      - EMAIL_FROM=${EMAIL_FROM:-contact@deblomper.dev}
+      - EMAIL_TO=${EMAIL_TO:-contact@nubcoder.dev}
+      - NEXT_PUBLIC_TURNSTILE_SITE_KEY=${NEXT_PUBLIC_TURNSTILE_SITE_KEY}
+      - TURNSTILE_SECRET_KEY=${TURNSTILE_SECRET_KEY}
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.deblomperr-portfolio.rule=Host(`${VIRTUAL_HOST:-deblomper.dev}`)"
+      - "traefik.http.routers.deblomperr-portfolio.entrypoints=websecure"
+      - "traefik.http.routers.deblomperr-portfolio.tls.certresolver=letsencrypt"
+      - "traefik.http.services.deblomperr-portfolio.loadbalancer.server.port=3000"
+    expose:
+      - "3000"
+    networks:
+      - web
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://127.0.0.1:3000/ || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+networks:
+  web:
+    name: web
+    external: true

@@ -1,0 +1,480 @@
+@import "tailwindcss";
+
+/* ─── Palette: Crisp Modern Developer Zinc Theme ────────────────────────────
+   True clean contrast: paper white in light mode, deep zinc in dark mode.
+   High-contrast typography, subtle neutral borders, emerald live indicators.
+   ------------------------------------------------------------------------- */
+:root {
+  --bone: #ffffff;
+  --bone-2: #f4f4f5;
+  --surface: #ffffff;
+  --ink: #09090b;
+  --ink-muted: #52525b;
+  --ink-faint: #71717a;
+  --accent: #09090b;
+  --accent-soft: rgba(0, 0, 0, 0.04);
+  --rule: #e4e4e7;
+  --rule-strong: #d4d4d8;
+  --live-green: #10b981;
+
+  color-scheme: light;
+}
+
+[data-theme="dark"] {
+  --bone: #09090b;
+  --bone-2: #141417;
+  --surface: #101014;
+  --ink: #fafafa;
+  --ink-muted: #a1a1aa;
+  --ink-faint: #71717a;
+  --accent: #fafafa;
+  --accent-soft: rgba(255, 255, 255, 0.06);
+  --rule: #27272a;
+  --rule-strong: #3f3f46;
+  --live-green: #10b981;
+
+  color-scheme: dark;
+}
+
+/* Tailwind theme utilities */
+@theme inline {
+  --color-bone: var(--bone);
+  --color-bone-2: var(--bone-2);
+  --color-surface: var(--surface);
+  --color-ink: var(--ink);
+  --color-muted: var(--ink-muted);
+  --color-faint: var(--ink-faint);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-rule: var(--rule);
+  --color-rule-strong: var(--rule-strong);
+  --color-live: var(--live-green);
+
+  --font-sans: var(--font-inter), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, "SF Mono", Menlo, monospace;
+  --font-serif: var(--font-inter), system-ui, sans-serif;
+}
+
+/* ─── Type scale ─────────────────────────────────────────────────────────── */
+:root {
+  --step--1: 0.8125rem;
+  --step-0: 0.9375rem;
+  --step-1: 1.0625rem;
+  --step-2: 1.25rem;
+  --step-3: 1.5rem;
+  --step-4: 1.875rem;
+  --step-5: 2.25rem;
+
+  --gap-section: clamp(3.5rem, 6vw, 5.5rem);
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ─── Base ───────────────────────────────────────────────────────────────── */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 5rem;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--bone);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    font-size: var(--step-0);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-weight: 600;
+    color: var(--ink);
+    letter-spacing: -0.02em;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--ink);
+    outline-offset: 2px;
+    border-radius: 3px;
+  }
+
+  ::selection {
+    background: var(--ink);
+    color: var(--bone);
+  }
+
+  code,
+  kbd,
+  samp,
+  pre {
+    font-family: var(--font-mono);
+  }
+}
+
+@layer components {
+  /* ─── Layout ───────────────────────────────────────────────────────────── */
+  .container {
+    width: 100%;
+    max-width: 58rem;
+    margin-inline: auto;
+    padding-inline: 1.25rem;
+  }
+
+  @media (min-width: 40rem) {
+    .container {
+      padding-inline: 2rem;
+    }
+  }
+
+  .section {
+    padding-block: var(--gap-section);
+  }
+
+  .measure {
+    max-width: 65ch;
+  }
+
+  .measure-tight {
+    max-width: 48ch;
+  }
+
+  /* ─── Type roles ───────────────────────────────────────────────────────── */
+  .display {
+    font-family: var(--font-sans);
+    font-size: clamp(2rem, 4vw, 2.75rem);
+    font-weight: 600;
+    line-height: 1.15;
+    letter-spacing: -0.03em;
+    color: var(--ink);
+  }
+
+  .serif-lg {
+    font-family: var(--font-sans);
+    font-size: clamp(1.5rem, 2.5vw, 1.875rem);
+    font-weight: 600;
+    line-height: 1.25;
+    letter-spacing: -0.025em;
+    color: var(--ink);
+  }
+
+  .serif-md {
+    font-family: var(--font-sans);
+    font-size: clamp(1.25rem, 2vw, 1.5rem);
+    font-weight: 600;
+    line-height: 1.3;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+  }
+
+  .serif-sm {
+    font-family: var(--font-sans);
+    font-size: 1.125rem;
+    font-weight: 500;
+    line-height: 1.4;
+    letter-spacing: -0.015em;
+    color: var(--ink);
+  }
+
+  .lede {
+    font-size: 1.0625rem;
+    line-height: 1.65;
+    color: var(--ink-muted);
+    text-wrap: pretty;
+  }
+
+  .prose {
+    font-size: 0.9375rem;
+    line-height: 1.65;
+    color: var(--ink-muted);
+    text-wrap: pretty;
+  }
+
+  .meta {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    line-height: 1.5;
+    letter-spacing: 0.04em;
+    color: var(--ink-faint);
+  }
+
+  .meta-strong {
+    color: var(--ink);
+    font-weight: 500;
+  }
+
+  .mono {
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    letter-spacing: -0.01em;
+  }
+
+  /* ─── Clean Dividers ───────────────────────────────────────────────────── */
+  .rule {
+    height: 1px;
+    width: 100%;
+    background: var(--rule);
+    border: 0;
+  }
+
+  .rule-tick {
+    height: 1px;
+    width: 100%;
+    background: var(--rule);
+    border: 0;
+  }
+
+  /* ─── Clean Links ──────────────────────────────────────────────────────── */
+  .link {
+    text-decoration: underline;
+    text-decoration-color: var(--rule-strong);
+    text-underline-offset: 3px;
+    transition: text-decoration-color 150ms ease, color 150ms ease;
+  }
+
+  .link:hover,
+  .link:focus-visible {
+    text-decoration-color: var(--ink);
+    color: var(--ink);
+  }
+
+  .link-static {
+    text-decoration: underline;
+    text-decoration-color: var(--rule-strong);
+    text-underline-offset: 3px;
+  }
+
+  .link-static:hover {
+    text-decoration-color: var(--ink);
+  }
+
+  /* ─── Project Rows ─────────────────────────────────────────────────────── */
+  .row {
+    position: relative;
+    border-top: 1px solid var(--rule);
+    transition: background-color 150ms ease;
+  }
+
+  .row:hover {
+    background-color: var(--accent-soft);
+  }
+
+  .row-target::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+  }
+
+  .row-aside {
+    position: relative;
+    z-index: 2;
+  }
+
+  .row-title {
+    color: var(--ink);
+    font-weight: 500;
+  }
+
+  .arrow {
+    display: inline-block;
+    transition: transform 180ms ease;
+  }
+
+  .row:hover .arrow,
+  .hover-arrow:hover .arrow {
+    transform: translate(2px, -2px);
+  }
+
+  /* ─── Real Live Status Dot ─────────────────────────────────────────────── */
+  .dot {
+    position: relative;
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--live-green);
+  }
+
+  .dot:not(.dot-idle)::after {
+    content: "";
+    position: absolute;
+    inset: -3px;
+    border-radius: 50%;
+    border: 1px solid var(--live-green);
+    opacity: 0.75;
+    animation: live-pulse 2.2s cubic-bezier(0.2, 0.8, 0.2, 1) infinite;
+  }
+
+  @keyframes live-pulse {
+    0% {
+      transform: scale(0.6);
+      opacity: 0.9;
+    }
+    100% {
+      transform: scale(2.2);
+      opacity: 0;
+    }
+  }
+
+  .dot-idle {
+    background: var(--ink-faint);
+  }
+
+  /* ─── Theme toggle icon swap ──────────────────────────────────────────── */
+  .theme-icon-light {
+    display: none;
+  }
+
+  [data-theme="dark"] .theme-icon-light {
+    display: block;
+  }
+
+  [data-theme="dark"] .theme-icon-dark {
+    display: none;
+  }
+
+  /* ─── Craft Animations: Staggered Entrance ────────────────────────────── */
+  @keyframes fade-slide-up {
+    from {
+      opacity: 0;
+      transform: translateY(14px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-slide-up {
+    opacity: 0;
+    animation: fade-slide-up 600ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  .stagger-1 { animation-delay: 50ms; }
+  .stagger-2 { animation-delay: 110ms; }
+  .stagger-3 { animation-delay: 170ms; }
+  .stagger-4 { animation-delay: 230ms; }
+  .stagger-5 { animation-delay: 290ms; }
+  .stagger-6 { animation-delay: 350ms; }
+
+  /* ─── Craft Animations: Scroll Reveal ─────────────────────────────────── */
+  .reveal {
+    transition: opacity 650ms cubic-bezier(0.16, 1, 0.3, 1), transform 650ms cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: opacity, transform;
+  }
+
+  .js .reveal:not(.is-visible) {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+
+  .js .reveal.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .reveal-delay-1 { transition-delay: 60ms; }
+  .reveal-delay-2 { transition-delay: 120ms; }
+  .reveal-delay-3 { transition-delay: 180ms; }
+  .reveal-delay-4 { transition-delay: 240ms; }
+
+  /* ─── Craft Physics: Card Hover Elevations ────────────────────────────── */
+  .card-hover {
+    transition: transform 220ms cubic-bezier(0.16, 1, 0.3, 1),
+                border-color 200ms ease,
+                box-shadow 220ms ease,
+                background-color 200ms ease;
+  }
+
+  .card-hover:hover {
+    transform: translateY(-2px);
+    border-color: var(--rule-strong);
+    box-shadow: 0 8px 20px -6px rgba(0, 0, 0, 0.06), 0 3px 6px -3px rgba(0, 0, 0, 0.03);
+  }
+
+  [data-theme="dark"] .card-hover:hover {
+    box-shadow: 0 8px 24px -6px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.07);
+  }
+
+  /* ─── Craft Physics: Tactile Button Press ─────────────────────────────── */
+  .btn-press {
+    transition: transform 140ms cubic-bezier(0.16, 1, 0.3, 1),
+                opacity 150ms ease,
+                background-color 150ms ease,
+                border-color 150ms ease;
+  }
+
+  .btn-press:hover {
+    transform: translateY(-1px);
+  }
+
+  .btn-press:active {
+    transform: translateY(1px) scale(0.98);
+  }
+
+  /* ─── Craft Physics: Tag Hover ────────────────────────────────────────── */
+  .tag-hover {
+    transition: transform 180ms cubic-bezier(0.16, 1, 0.3, 1),
+                border-color 180ms ease,
+                color 180ms ease,
+                background-color 180ms ease;
+  }
+
+  .tag-hover:hover {
+    transform: translateY(-1.5px);
+    border-color: var(--rule-strong);
+    color: var(--ink);
+  }
+
+  /* ─── Craft Physics: Arrow Glide ──────────────────────────────────────── */
+  .arrow {
+    display: inline-block;
+    transition: transform 200ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .group:hover .arrow,
+  .hover-trigger:hover .arrow,
+  .row:hover .arrow {
+    transform: translate(2.5px, -2.5px);
+  }
+
+  .rise {
+    opacity: 0;
+    animation: fade-slide-up 500ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .js .reveal:not(.is-visible),
+  .animate-slide-up,
+  .rise {
+    opacity: 1;
+    transform: none;
+    transition: none;
+    animation: none;
+  }
+
+  .card-hover:hover,
+  .btn-press:hover,
+  .btn-press:active,
+  .tag-hover:hover,
+  .group:hover .arrow,
+  .hover-trigger:hover .arrow,
+  .row:hover .arrow {
+    transform: none;
+  }
+
+  .dot:not(.dot-idle)::after {
+    animation: none;
+  }
+}
