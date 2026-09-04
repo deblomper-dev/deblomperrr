@@ -17,7 +17,7 @@ services:
       - NEXT_PUBLIC_TURNSTILE_SITE_KEY=${NEXT_PUBLIC_TURNSTILE_SITE_KEY}
       - TURNSTILE_SECRET_KEY=${TURNSTILE_SECRET_KEY}
       - GITHUB_TOKEN=${GITHUB_TOKEN}
-      - GITHUB_USERNAME=${GITHUB_USERNAME:-nub-coders}
+      - GITHUB_USERNAME=${GITHUB_USERNAME:-deblomperr}
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.deblomperr-portfolio.rule=Host(`${VIRTUAL_HOST:-deblomper.dev}`)"
