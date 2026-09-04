@@ -1,92 +1,74 @@
-# Ankit Kumar — Personal Portfolio (`deblomper.dev`)
+# Ankit Kumar (@deblomperr)
 
-Personal engineering portfolio for Ankit Kumar ([@deblomperr](https://github.com/deblomperr)), full-stack developer building and operating backend systems, deployment platforms, and self-hosted infrastructure.
-
-Live site: [deblomper.dev](https://deblomper.dev)
-
----
-
-# Tech Stack
-
-- **Framework**: [Next.js 16](https://nextjs.org/) (App Router, React 19)
-- **Styling**: Tailwind CSS v4 + custom zinc design tokens (light & dark mode)
-- **Email Gateway**: NubMail API (`https://mails.nubcoders.com/api/emails/send-api`)
-- **Bot Defense**: Cloudflare Turnstile verification + honeypot bot trap
-- **Rate Limiting**: Sliding window in-memory rate limiter (5 requests / 10 min per IP, LRU eviction, memory bound)
-- **Infrastructure**: Docker multi-stage build, Docker Compose, Traefik reverse proxy with Let's Encrypt SSL
-
----
-
-# Project Structure
-
-```
-.
-├── app/
-│   ├── api/contact/route.ts       # Contact form API endpoint with rate limiting & Turnstile
-│   ├── components/                # Reusable UI components (SiteHeader, ContactForm, Turnstile, etc.)
-│   ├── sections/                  # Portfolio sections (Hero, SelectedWork, Approach, About, Contact)
-│   ├── work/                      # Case studies and deep dives (/work/[slug])
-│   ├── globals.css                # Zinc theme design system, typography, animations
-│   ├── layout.tsx                 # Root layout with metadata and OpenGraph
-│   └── page.tsx                   # Main portfolio page with Schema.org Person JSON-LD
-├── lib/
-│   ├── data/                      # Structured site data (projects, principles, stack)
-│   ├── rate-limiter.ts            # In-memory sliding-window IP rate limiter
-│   └── turnstile.ts               # Cloudflare Turnstile token validation
-├── docker-compose.yml             # Production container orchestrator with Traefik labels
-└── Dockerfile                     # Multi-stage optimized Node.js container build
+```text
+  _       _     _                                 
+ _| |___ | |_  | |___ _____ ___ ___ ___ ___ ___   
+| . | -_|| . | | | . |     | . | -_|  _|  _| -_|  
+|___|___||___| |_|___|_|_|_|  _|___|_| |_| |___|  
+                           |_|                    
+Full-Stack Developer • Systems, Deployment Platforms & Self-Hosted Infra
+Live: https://deblomper.dev • Work: https://github.com/nub-coders
 ```
 
----
-
-# Getting Started
-
-**Prerequisites**
-- Node.js 20+
-- npm or Docker
-
-**Local Development**
-
-1. Clone repository:
-   ```bash
-   git clone https://github.com/deblomperr/deblomperr.git
-   cd deblomperr
-   ```
-
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-
-3. Copy the environment configuration:
-   ```bash
-   cp .env.example .env
-   ```
-   Fill in your `EMAIL_API_KEY`, `NEXT_PUBLIC_TURNSTILE_SITE_KEY`, and `TURNSTILE_SECRET_KEY`.
-
-4. Start the development server:
-   ```bash
-   npm run dev
-   ```
-   Open [http://localhost:3000](http://localhost:3000).
-
-5. Run test suite:
-   ```bash
-   npm test
-   ```
+I build and operate backend services, deployment engines, and self-hosted infrastructure under [nub-coders](https://github.com/nub-coders) since 2020. Most of my work lives where long-running processes talk to systems they don't control — the Docker daemon, SMTP peers, Telegram's calling layer, or upstreams that rewrite their signatures without notice.
 
 ---
 
-# Production Deployment (Docker Compose)
+# Live Services in Production
 
-The project includes an optimized standalone Dockerfile and Traefik integration:
-
-```bash
-docker compose up -d --build
-```
+| Service | Endpoint | Stack | Operational Highlights |
+| :--- | :--- | :--- | :--- |
+| **Halvo** | [halvo.nubcoders.com](https://halvo.nubcoders.com) | TypeScript · Docker Engine API · React | Automated container builds, live WebSocket log streaming, orphaned resource sweeper |
+| **NubMail** | [mails.nubcoders.com](https://mails.nubcoders.com) | Next.js · Postfix · Dovecot · Postgres | Self-hosted mail stack with REST API dispatch, DKIM signing, and SPF/DMARC verification |
+| **Ytube API** | [api.nubcoders.com](https://api.nubcoders.com) | Python 3.13 · FastAPI · Deno · Redis | Media extraction API with embedded Deno runtime for signature evaluation & token-bucket rate limits |
 
 ---
 
-# License
+# Featured Systems & Open Source Work
 
-MIT
+**Halvo — Container Provisioning & Deployment Platform**
+- Talks to the Docker Engine API over the Unix socket with an automated sweeper reclaiming orphaned containers, images, and volumes.
+- Streams live container events and build logs over WebSockets; features state-machine credit deduction to avoid billing on provisioning failure.
+
+**NubDB — In-Memory Key-Value Store (Zig)**
+- Socket-addressable in-memory KV engine written in Zig 0.13 with append-only persistence and background log compaction.
+- Tested against a bespoke binary wire protocol with client SDKs implemented across seven languages.
+
+**CppGram — Telegram Client Framework (C++20)**
+- C++20 Telegram client framework over TDLib with Pyrogram-style API ergonomics.
+- Features expression-based boolean filter algebra (`Filters::text() && !Filters::bot()`) and `Result<T>` error monads instead of runtime exceptions.
+
+**Zipper — Supervised Archive Bot (Python)**
+- Extracts multi-gigabyte archives over Telegram under active byte-and-entry budgets over the 7z child process to stop decompression bombs.
+- Re-verifies all output paths with `lstat` and `realpath` to prevent symlink traversal attacks.
+
+**Nub Music Bot — Low-Latency Voice Chat Streaming (Python)**
+- Streams HD media into Telegram group voice chats from an assistant worker pool.
+- Incorporates address-level SSRF defenses (`url_guard.py`) resolving IP targets to block loopback, link-local, and cloud metadata queries.
+
+---
+
+# Engineering Practices
+
+- **Operate what you build:** Real operational feedback (container leaks, SMTP deliverability, upstream API changes) drives reliable design far better than local mocks.
+- **Strict boundary validation:** Defend against real attack surfaces: resolve IP addresses to block SSRF before making outbound requests, enforce live byte budgets during archive extraction, and verify DNS records (SPF, DKIM) before sending mail.
+- **Automate rules where code runs:** If an error is easy to introduce and silent at runtime — like un-awaited async MongoDB queries — enforce it with AST checks in CI.
+- **Understand the layer beneath:** Building a key-value store in Zig or TDLib bindings in C++20 is about knowing how allocators, hash tables, and event loops behave when high-level abstractions fail.
+
+---
+
+# Technical Stack
+
+- **Languages:** TypeScript, Python 3.13, Zig 0.13, C++20, Go, Rust
+- **Runtime & Infrastructure:** Docker, Docker Compose, Traefik, Kubernetes, Postfix, Dovecot, nginx
+- **Databases & Stores:** PostgreSQL, MongoDB, Redis, Prisma
+- **Interfaces & Frameworks:** React 19, Next.js 16, Tailwind CSS, FastAPI, Express, Pyrogram, TDLib
+
+---
+
+# Connect & Verify
+
+- **Portfolio:** [deblomper.dev](https://deblomper.dev)
+- **Work Account:** [github.com/nub-coders](https://github.com/nub-coders)
+- **Direct Email:** [contact@deblomper.dev](mailto:contact@deblomper.dev) · [contact@nubcoder.dev](mailto:contact@nubcoder.dev)
+- **Telegram:** [@nub_coder_s](https://t.me/nub_coder_s)
