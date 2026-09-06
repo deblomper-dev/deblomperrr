@@ -47,14 +47,21 @@ describe("GitHub Contribution Graph SVG", () => {
     assert.ok(svg.includes("No contribution data available"));
   });
 
-  it("renders series graph without background card and with paths", () => {
+  it("renders series graph with invisible background (no background card or area gradient by default)", () => {
     const data = daysFrom([0, 2, 4, 1, 5]);
     const svg = generateGraphSVG(data);
     assert.match(svg, /^<svg/);
     assert.match(svg, /<\/svg>$/);
     assert.ok(!svg.includes('fill="#0d1117"'));
+    assert.ok(!svg.includes("areaGrad"));
     assert.ok(svg.includes("<path"));
     assert.ok(!svg.includes("NaN"));
     assert.ok(!svg.includes("undefined"));
+  });
+
+  it("renders area gradient only when showArea is true", () => {
+    const data = daysFrom([0, 2, 4, 1, 5]);
+    const svg = generateGraphSVG(data, true);
+    assert.ok(svg.includes("areaGrad"));
   });
 });

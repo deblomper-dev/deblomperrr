@@ -26,7 +26,7 @@ export function emptyGraphSVG(): string {
 </svg>`;
 }
 
-export function generateGraphSVG(days: ContributionDay[]): string {
+export function generateGraphSVG(days: ContributionDay[], showArea = false): string {
   if (!days.length) return emptyGraphSVG();
 
   const sorted = [...days]
@@ -52,9 +52,11 @@ export function generateGraphSVG(days: ContributionDay[]): string {
 
   const linePath = points.map((p, i) => `${i === 0 ? "M" : "L"} ${p.x.toFixed(1)} ${p.y.toFixed(1)}`).join(" ");
 
-  const areaPath = linePath
-    + ` L ${points[points.length - 1].x.toFixed(1)} ${(PADDING.top + CHART_H).toFixed(1)}`
-    + ` L ${points[0].x.toFixed(1)} ${(PADDING.top + CHART_H).toFixed(1)} Z`;
+  const areaPath = showArea
+    ? linePath
+      + ` L ${points[points.length - 1].x.toFixed(1)} ${(PADDING.top + CHART_H).toFixed(1)}`
+      + ` L ${points[0].x.toFixed(1)} ${(PADDING.top + CHART_H).toFixed(1)} Z`
+    : "";
 
   const gridLines = yTicks.map((v) => {
     const y = PADDING.top + CHART_H - (v / yMax) * CHART_H;
@@ -75,12 +77,17 @@ export function generateGraphSVG(days: ContributionDay[]): string {
     `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="3.5" fill="${POINT_COLOR}"/>`
   ).join("\n    ");
 
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="${WIDTH}" height="${HEIGHT}" viewBox="0 0 ${WIDTH} ${HEIGHT}">
-  <defs>
-    <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
+  const areaGradDef = showArea
+    ? `\n    <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0%" stop-color="${AREA_COLOR}" stop-opacity="0.35"/>
       <stop offset="100%" stop-color="${AREA_COLOR}" stop-opacity="0.02"/>
-    </linearGradient>
+    </linearGradient>`
+    : "";
+
+  const areaMarkup = showArea ? `\n  <!-- Area -->\n  <path d="${areaPath}" fill="url(#areaGrad)"/>\n` : "";
+
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${WIDTH}" height="${HEIGHT}" viewBox="0 0 ${WIDTH} ${HEIGHT}">
+  <defs>${areaGradDef}
     <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
       <feGaussianBlur stdDeviation="2" result="blur"/>
       <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
@@ -104,11 +111,7 @@ export function generateGraphSVG(days: ContributionDay[]): string {
   ${gridLines}
 
   <!-- X labels -->
-  ${xLabels}
-
-  <!-- Area -->
-  <path d="${areaPath}" fill="url(#areaGrad)"/>
-
+  ${xLabels}${areaMarkup}
   <!-- Line -->
   <path d="${linePath}" fill="none" stroke="${LINE_COLOR}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
 
@@ -123,7 +126,7 @@ export function generateGraphSVG(days: ContributionDay[]): string {
 </svg>`;
 }
 
-export async function getContributionGraphSVG(username?: string, force = false): Promise<string> {
+export async function getContributionGraphSVG(username?: string, force = false, showArea = false): Promise<string> {
   const days = await fetchContributions(undefined, username, force);
-  return generateGraphSVG(days);
+  return generateGraphSVG(days, showArea);
 }

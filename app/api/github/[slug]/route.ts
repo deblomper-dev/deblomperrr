@@ -4,7 +4,7 @@ import { getContributionGraphSVG } from "@/lib/github/contribution-graph";
 
 export const dynamic = "force-dynamic";
 
-const SVG_CACHE_CONTROL = "public, max-age=1800, s-maxage=3600, stale-while-revalidate=86400";
+const SVG_CACHE_CONTROL = "public, max-age=300, s-maxage=300, stale-while-revalidate=86400";
 
 export async function GET(
   request: NextRequest,
@@ -14,6 +14,7 @@ export async function GET(
   const url = new URL(request.url);
   const username = url.searchParams.get("user") || url.searchParams.get("username") || undefined;
   const force = url.searchParams.get("force") === "true";
+  const showArea = url.searchParams.get("area") === "true";
 
   if (slug === "streak-capsules.svg" || slug === "streak-capsules") {
     try {
@@ -43,7 +44,7 @@ export async function GET(
 
   if (slug === "contribution-graph.svg" || slug === "contribution-graph") {
     try {
-      const svg = await getContributionGraphSVG(username, force);
+      const svg = await getContributionGraphSVG(username, force, showArea);
       return new NextResponse(svg, {
         status: 200,
         headers: {
