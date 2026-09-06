@@ -39,20 +39,20 @@ describe("GitHub Streak Calculations", () => {
 });
 
 describe("GitHub Contribution Graph SVG", () => {
-  it("renders empty state with background card", () => {
+  it("renders empty state without background card", () => {
     const svg = emptyGraphSVG();
     assert.match(svg, /^<svg/);
     assert.match(svg, /<\/svg>$/);
-    assert.ok(svg.includes('fill="#0d1117"'));
+    assert.ok(!svg.includes('fill="#0d1117"'));
     assert.ok(svg.includes("No contribution data available"));
   });
 
-  it("renders series graph with background card and paths", () => {
+  it("renders series graph without background card and with paths", () => {
     const data = daysFrom([0, 2, 4, 1, 5]);
     const svg = generateGraphSVG(data);
     assert.match(svg, /^<svg/);
     assert.match(svg, /<\/svg>$/);
-    assert.ok(svg.includes('fill="#0d1117"'));
+    assert.ok(!svg.includes('fill="#0d1117"'));
     assert.ok(svg.includes("<path"));
     assert.ok(!svg.includes("NaN"));
     assert.ok(!svg.includes("undefined"));

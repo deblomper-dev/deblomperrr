@@ -54,7 +54,6 @@ export async function GET(
     } catch (err: unknown) {
       console.error("[Contribution Graph Error]", (err as Error)?.message ?? err);
       const fallback = `<svg xmlns="http://www.w3.org/2000/svg" width="850" height="320" viewBox="0 0 850 320">
-  <rect width="850" height="320" rx="6" fill="#0d1117"/>
   <text x="425" y="165" text-anchor="middle" fill="#8b949e" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" font-size="14">Contribution graph temporarily unavailable</text>
 </svg>`;
       return new NextResponse(fallback, {
