@@ -16,12 +16,7 @@ export async function GET(
   const force = url.searchParams.get("force") === "true";
   const showArea = url.searchParams.get("area") === "true";
   const explicitTheme = url.searchParams.get("theme");
-  const browserTheme = request.headers.get("sec-ch-prefers-color-scheme");
-  const theme = explicitTheme === "light" || explicitTheme === "dark"
-    ? explicitTheme
-    : browserTheme === "light"
-      ? "light"
-      : "dark";
+  const theme = explicitTheme === "light" ? "light" : "dark";
 
   if (slug === "streak-capsules.svg" || slug === "streak-capsules") {
     try {

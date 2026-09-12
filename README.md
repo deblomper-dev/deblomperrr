@@ -68,7 +68,10 @@ Building production web apps and API services with **TypeScript, React, Node.js,
 
 <img src="https://deblomper.dev/api/github/streak-capsules.svg" alt="GitHub streak stats" />
 
-<img src="https://deblomper.dev/api/github/contribution-graph.svg?v=2" width="95%" alt="GitHub contribution graph" />
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://deblomper.dev/api/github/contribution-graph.svg?theme=dark&v=3">
+  <img src="https://deblomper.dev/api/github/contribution-graph.svg?theme=light&v=3" width="95%" alt="GitHub contribution graph" />
+</picture>
 
 </div>
 
