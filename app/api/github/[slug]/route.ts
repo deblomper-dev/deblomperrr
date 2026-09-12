@@ -15,6 +15,13 @@ export async function GET(
   const username = url.searchParams.get("user") || url.searchParams.get("username") || undefined;
   const force = url.searchParams.get("force") === "true";
   const showArea = url.searchParams.get("area") === "true";
+  const explicitTheme = url.searchParams.get("theme");
+  const browserTheme = request.headers.get("sec-ch-prefers-color-scheme");
+  const theme = explicitTheme === "light" || explicitTheme === "dark"
+    ? explicitTheme
+    : browserTheme === "light"
+      ? "light"
+      : "dark";
 
   if (slug === "streak-capsules.svg" || slug === "streak-capsules") {
     try {
@@ -44,7 +51,7 @@ export async function GET(
 
   if (slug === "contribution-graph.svg" || slug === "contribution-graph") {
     try {
-      const svg = await getContributionGraphSVG(username, force, showArea);
+      const svg = await getContributionGraphSVG(username, force, showArea, theme);
       return new NextResponse(svg, {
         status: 200,
         headers: {

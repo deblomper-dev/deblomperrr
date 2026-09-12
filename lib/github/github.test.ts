@@ -64,4 +64,12 @@ describe("GitHub Contribution Graph SVG", () => {
     const svg = generateGraphSVG(data, true);
     assert.ok(svg.includes("areaGrad"));
   });
+
+  it("uses a light-theme palette when explicitly requested", () => {
+    const data = daysFrom([0, 2, 4, 1, 5]);
+    const svg = generateGraphSVG(data, false, "light");
+    assert.ok(svg.includes("#0f172a"));
+    assert.ok(svg.includes("#dfe7f3"));
+    assert.ok(!svg.includes("fill: #ffffff"));
+  });
 });
