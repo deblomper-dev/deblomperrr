@@ -1,0 +1,117 @@
+.motion-toggle {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  margin: -5px -5px -5px 0;
+  border: 1px solid #a6acd0;
+  border-radius: 50%;
+  color: #252c56;
+  transition: background-color 150ms ease;
+}
+.motion-toggle svg { width: 17px; height: 17px; }
+.motion-toggle:focus-visible { outline-color: #2947e8; }
+
+.orbit-track {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  pointer-events: none;
+  z-index: -1;
+}
+.orbit-track-one {
+  width: 285px;
+  height: 285px;
+  transform: translate(-50%, -50%);
+}
+.orbit-track-two {
+  width: 370px;
+  height: 370px;
+  transform: translate(-50%, -50%) rotate(-35deg) scaleY(0.54);
+}
+.orbit-rotor { position: absolute; inset: 0; transform: rotate(225deg); }
+.orbit-track-two .orbit-rotor { transform: rotate(70deg); }
+.orbit-satellite {
+  position: absolute;
+  left: calc(50% - 10px);
+  top: -10px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #ed9677;
+}
+.orbit-track-two .orbit-satellite {
+  width: 14px;
+  height: 14px;
+  left: calc(50% - 7px);
+  top: -7px;
+  background: #2947e8;
+}
+
+/* Equal grid tracks keep the highlight aligned through responsive changes. */
+.system-select {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0;
+  isolation: isolate;
+}
+.system-selection {
+  position: absolute;
+  z-index: -1;
+  inset: 5px auto 5px 5px;
+  width: calc((100% - 10px) / 3);
+  border-radius: 6px;
+  background: #f7f7f2;
+  transform: translateX(0);
+}
+[data-system="mail"] .system-selection { transform: translateX(100%); }
+[data-system="media"] .system-selection { transform: translateX(200%); }
+.system-select > button[aria-pressed="true"] { background: transparent; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .system-playground { animation: playground-enter 700ms var(--ease-out) 120ms backwards; }
+  .system-playground:focus-within { animation: none; }
+  .system-playground .art-core,
+  .system-playground .core-center { transition: transform 500ms var(--ease-in-out); }
+  .system-selection { transition: transform 250ms var(--ease-out); }
+  .system-description > a { transition: background-color 150ms ease, transform 150ms var(--ease-out); }
+  .system-description > a svg { transition: transform 200ms var(--ease-out); }
+  .motion-toggle { transition: background-color 150ms ease, transform 150ms var(--ease-out); }
+  .motion-toggle:active:not(:focus-visible),
+  .system-description > a:active:not(:focus-visible) { transform: scale(0.95); }
+
+  .orbit-rotor { animation: satellite-orbit 18s linear infinite; animation-play-state: paused; }
+  .orbit-track-two .orbit-rotor { animation-duration: 28s; animation-direction: reverse; animation-delay: -9s; }
+  .system-playground.motion-in-view[data-paused="false"] .orbit-rotor { animation-play-state: running; }
+
+  @media (hover: hover) and (pointer: fine) {
+    .motion-toggle:hover { background: #f7f7f2; }
+    .system-description > a:hover svg { transform: translateX(3px); }
+  }
+}
+
+/* Keyboard selection changes the diagram immediately, including mid-transition. */
+.system-playground[data-keyboard-selection="true"] .art-core,
+.system-playground[data-keyboard-selection="true"] .core-center,
+.system-playground[data-keyboard-selection="true"] .core-glyph,
+.system-playground[data-keyboard-selection="true"] .system-selection,
+.system-playground[data-keyboard-selection="true"] .system-select > button { transition: none; }
+.system-playground[data-keyboard-selection="true"] .art-core { animation: none; }
+
+@media (max-width: 480px) {
+  .orbit-track-one { width: 245px; height: 245px; }
+  .orbit-track-two { width: 310px; height: 310px; transform: translate(-50%, -50%) rotate(-35deg) scaleY(0.565); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .motion-toggle { visibility: hidden; }
+}
+
+@keyframes playground-enter {
+  from { opacity: 0; transform: translateY(20px) scale(0.97); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes satellite-orbit {
+  from { transform: rotate(225deg); }
+  to { transform: rotate(585deg); }
+}

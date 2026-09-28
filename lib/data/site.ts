@@ -2,7 +2,7 @@ import type { ContactLink } from "./types";
 
 export const site = {
   name: "Ankit Kumar",
-  handle: "deblomperr",
+  handle: "deblomperrr",
   domain: "deblomper.dev",
   url: "https://deblomper.dev",
   role: "Full-stack developer",
@@ -53,7 +53,7 @@ export const principles = [
 export const stack = [
   {
     label: "Languages",
-    items: ["TypeScript", "Python", "Zig", "C++20", "Go", "Rust"],
+    items: ["TypeScript", "Python", "Zig", "C++20", "Go", "Rust", "C"],
   },
   {
     label: "Runtime & infra",
@@ -77,7 +77,7 @@ export const about = [
 
 export const contactLinks: ContactLink[] = [
   { label: "Email", value: "contact@deblomper.dev", href: "mailto:contact@deblomper.dev" },
-  { label: "GitHub", value: "github.com/deblomperr", href: "https://github.com/deblomperr" },
+  { label: "GitHub", value: "github.com/deblomperrr", href: "https://github.com/deblomperrr" },
   { label: "Work account", value: "github.com/nub-coders", href: "https://github.com/nub-coders" },
   { label: "Telegram", value: "@nub_coder_s", href: "https://t.me/nub_coder_s" },
 ];

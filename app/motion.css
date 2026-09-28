@@ -1,0 +1,125 @@
+/* Shared motion uses the site's easing tokens. Content is visible before JS. */
+.scroll-progress { display: none; }
+
+.theme-toggle { position: relative; }
+.theme-toggle .theme-icon-light,
+.theme-toggle .theme-icon-dark {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  transition: opacity 160ms ease;
+}
+.theme-toggle .theme-icon-dark { opacity: 0; }
+[data-theme="dark"] .theme-toggle .theme-icon-light { opacity: 0; }
+[data-theme="dark"] .theme-toggle .theme-icon-dark { opacity: 1; }
+
+.copy-icon { display: grid; width: 16px; height: 16px; }
+.copy-icon > span { grid-area: 1 / 1; transition: opacity 160ms ease; }
+.copy-icon-check { opacity: 0; }
+.copy-button[data-status="copied"] .copy-icon-default { opacity: 0; }
+.copy-button[data-status="copied"] .copy-icon-check { opacity: 1; }
+
+@media (prefers-reduced-motion: no-preference) {
+  /* Headline, context, and action enter in a short sequence. */
+  .hero-intro,
+  .hero-actions,
+  .availability,
+  .hero-footnote { animation: content-enter 600ms var(--ease-out) backwards; }
+  .hero-intro { animation-delay: 160ms; }
+  .hero-actions { animation-delay: 220ms; }
+  .availability { animation-delay: 280ms; }
+  .hero-footnote { animation-delay: 340ms; }
+  .hero-copy:focus-within .hero-actions { animation: none; }
+
+  .reveal-heading {
+    transition: opacity 600ms var(--ease-out), transform 600ms var(--ease-out), clip-path 600ms var(--ease-out);
+  }
+  .reveal-heading.reveal-ready:not(.is-visible) {
+    clip-path: inset(0 0 100% 0);
+    transform: translateY(18px);
+  }
+  .reveal-heading.is-visible { clip-path: inset(0); }
+  .reveal-horizontal.reveal-ready:not(.is-visible) { transform: translateX(24px); }
+  .reveal-wipe { transition: opacity 500ms var(--ease-out), clip-path 600ms var(--ease-out); }
+  .reveal-wipe.reveal-ready:not(.is-visible) { transform: none; clip-path: inset(0 100% 0 0); }
+  .reveal-wipe.is-visible { clip-path: inset(0); }
+  .principle-item:nth-child(2), .stack-row:nth-child(2) { transition-delay: 60ms; }
+  .principle-item:nth-child(3), .stack-row:nth-child(3) { transition-delay: 120ms; }
+  .stack-row:nth-child(n + 4) { transition-delay: 180ms; }
+  .reveal:focus-within { transition: none; clip-path: none; }
+
+  .approach-emblem { transition: opacity 700ms var(--ease-out), transform 900ms var(--ease-out); }
+  .approach-emblem.motion-ready:not(.is-visible) { opacity: 0; transform: rotate(-65deg) scale(0.9); }
+  .approach-emblem.is-visible { opacity: 1; transform: rotate(8deg); }
+
+  .brand-mark { transition: transform 250ms var(--ease-out); }
+  .primary-button svg { transition: transform 200ms var(--ease-out); }
+  .nav-link:not(.nav-contact) { position: relative; }
+  .nav-link:not(.nav-contact)::after {
+    content: "";
+    position: absolute;
+    height: 2px;
+    inset-inline: 18px;
+    bottom: 7px;
+    background: currentColor;
+    opacity: 0;
+    transform: scaleX(0.5);
+    transform-origin: left;
+    transition: transform 200ms var(--ease-out), opacity 150ms ease;
+  }
+  .nav-link[aria-current="page"] { text-decoration: none; }
+  .nav-link[aria-current="page"]::after { opacity: 1; transform: scaleX(1); }
+  .nav-contact,
+  .theme-toggle { transition: transform 150ms var(--ease-out), background-color 150ms ease, color 150ms ease; }
+  .nav-contact:active:not(:focus-visible),
+  .theme-toggle:active:not(:focus-visible) { transform: scale(0.97); }
+
+  .theme-toggle .theme-icon-light,
+  .theme-toggle .theme-icon-dark { transition: opacity 160ms ease, transform 250ms var(--ease-out); }
+  .theme-toggle .theme-icon-dark { transform: rotate(-45deg) scale(0.9); }
+  [data-theme="dark"] .theme-toggle .theme-icon-light { transform: rotate(45deg) scale(0.9); }
+  [data-theme="dark"] .theme-toggle .theme-icon-dark { transform: rotate(0) scale(1); }
+
+  .copy-icon > span { transition: opacity 160ms ease, transform 200ms var(--ease-out); }
+  .copy-icon-check { transform: translateY(4px) scale(0.9); }
+  .copy-button[data-status="copied"] .copy-icon-default { transform: translateY(-4px) scale(0.9); }
+  .copy-button[data-status="copied"] .copy-icon-check { transform: none; }
+
+  @media (hover: hover) and (pointer: fine) {
+    .site-brand:hover .brand-mark { transform: rotate(45deg); }
+    .primary-button:hover svg { transform: translateY(3px); }
+    .nav-link:not(.nav-contact):hover::after { opacity: 1; transform: scaleX(1); }
+  }
+
+  @supports (animation-timeline: scroll()) {
+    .scroll-progress {
+      display: block;
+      position: absolute;
+      inset: auto 0 -1px;
+      height: 2px;
+      background: var(--accent);
+      transform-origin: left;
+      animation: reading-progress linear both;
+      animation-timeline: scroll(root block);
+      pointer-events: none;
+    }
+  }
+  @media (max-width: 480px) {
+    .nav-link:not(.nav-contact)::after { inset-inline: 8px; }
+  }
+}
+
+/* Keyboard actions remain immediate even when motion is enabled. */
+.theme-toggle:focus-visible > span,
+.copy-button:focus-visible .copy-icon > span { transition: none; }
+.btn-press:active:focus-visible,
+.primary-button:active:focus-visible { transform: none; }
+
+@keyframes content-enter {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes reading-progress {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}

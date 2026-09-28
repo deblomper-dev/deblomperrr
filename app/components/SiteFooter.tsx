@@ -1,27 +1,31 @@
+import Link from "next/link";
 import { contactLinks, site } from "@/lib/data/site";
+import "../sections/story.css";
 
 const year = new Date().getFullYear();
 
 export function SiteFooter() {
   return (
-    <footer className="pb-12 pt-4">
+    <footer className="site-footer">
       <div className="container">
-        <div className="rule" />
-        <div className="mt-6 flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between text-xs">
-          <div>
-            <p className="mono font-medium text-ink">
-              © {year} {site.name} ({site.handle})
-            </p>
-            <p className="mono text-ink-faint mt-1">
-              Curated open-source systems under nub-coders.
-            </p>
-          </div>
-          <ul className="flex flex-wrap gap-x-5 gap-y-2">
+        <div className="footer-topline reveal">
+          <Link href="/#top" className="footer-name" aria-label={`${site.name}, back to top`}>
+            {site.name}<span aria-hidden="true">.</span>
+          </Link>
+          <Link href="/#top" className="footer-back">
+            Back to top
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M12 20V4m-7 7 7-7 7 7" stroke="currentColor" strokeWidth="1.75" />
+            </svg>
+          </Link>
+        </div>
+        <div className="footer-bottomline">
+          <p>© {year} {site.name}</p>
+          <ul aria-label="Social links">
             {contactLinks.map(({ label, href }) => (
               <li key={label}>
                 <a
                   href={href}
-                  className="mono text-ink-faint transition-colors hover:text-ink"
                   {...(href.startsWith("http")
                     ? { target: "_blank", rel: "noreferrer noopener" }
                     : {})}

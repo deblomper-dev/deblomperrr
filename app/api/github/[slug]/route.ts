@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getStreakCapsulesSVG } from "@/lib/github/streak-stats";
 import { getContributionGraphSVG } from "@/lib/github/contribution-graph";
+import { GitHubRequestLimitError, normalizeGitHubUsername } from "@/lib/github/contributions";
 
 export const dynamic = "force-dynamic";
 
@@ -11,16 +12,24 @@ export async function GET(
   { params }: { params: Promise<{ slug: string }> }
 ) {
   const { slug } = await params;
+  if (!["streak-capsules.svg", "streak-capsules", "contribution-graph.svg", "contribution-graph"].includes(slug)) {
+    return new NextResponse("Not Found", { status: 404 });
+  }
   const url = new URL(request.url);
-  const username = url.searchParams.get("user") || url.searchParams.get("username") || undefined;
-  const force = url.searchParams.get("force") === "true";
+  const requestedUsername = url.searchParams.get("user") || url.searchParams.get("username") || undefined;
+  let username: string | undefined;
+  try {
+    username = requestedUsername ? normalizeGitHubUsername(requestedUsername) : undefined;
+  } catch {
+    return new NextResponse("Invalid GitHub username.", { status: 400, headers: { "Cache-Control": "no-store" } });
+  }
   const showArea = url.searchParams.get("area") === "true";
   const explicitTheme = url.searchParams.get("theme");
   const theme = explicitTheme === "light" ? "light" : "dark";
 
   if (slug === "streak-capsules.svg" || slug === "streak-capsules") {
     try {
-      const svg = await getStreakCapsulesSVG(username, force);
+      const svg = await getStreakCapsulesSVG(username);
       return new NextResponse(svg, {
         status: 200,
         headers: {
@@ -35,10 +44,11 @@ export async function GET(
   <text x="310" y="14.5" text-anchor="middle" dominant-baseline="middle" fill="#c9c9d4" font-family="ui-monospace, monospace" font-size="11">Streak stats temporarily unavailable</text>
 </svg>`;
       return new NextResponse(fallback, {
-        status: 503,
+        status: err instanceof GitHubRequestLimitError ? 429 : 503,
         headers: {
           "Content-Type": "image/svg+xml; charset=utf-8",
-          "Cache-Control": "no-cache",
+          "Cache-Control": "no-store",
+          ...(err instanceof GitHubRequestLimitError ? { "Retry-After": String(err.retryAfter) } : {}),
         },
       });
     }
@@ -46,7 +56,7 @@ export async function GET(
 
   if (slug === "contribution-graph.svg" || slug === "contribution-graph") {
     try {
-      const svg = await getContributionGraphSVG(username, force, showArea, theme);
+      const svg = await getContributionGraphSVG(username, false, showArea, theme);
       return new NextResponse(svg, {
         status: 200,
         headers: {
@@ -60,10 +70,11 @@ export async function GET(
   <text x="425" y="165" text-anchor="middle" fill="#8b949e" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" font-size="14">Contribution graph temporarily unavailable</text>
 </svg>`;
       return new NextResponse(fallback, {
-        status: 503,
+        status: err instanceof GitHubRequestLimitError ? 429 : 503,
         headers: {
           "Content-Type": "image/svg+xml; charset=utf-8",
-          "Cache-Control": "no-cache",
+          "Cache-Control": "no-store",
+          ...(err instanceof GitHubRequestLimitError ? { "Retry-After": String(err.retryAfter) } : {}),
         },
       });
     }

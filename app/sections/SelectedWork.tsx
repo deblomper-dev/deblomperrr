@@ -1,37 +1,28 @@
 import Link from "next/link";
 
-import { SectionHeader } from "@/app/components/SectionHeader";
-import { FeatureRow } from "@/app/components/ProjectRow";
+import { ProjectArrow, ProjectTile } from "@/app/components/ProjectRow";
 import { featuredProjects, projects } from "@/lib/data/projects";
 
 export function SelectedWork() {
   return (
-    <section id="work-heading" aria-labelledby="work-label" className="section pt-4">
+    <section id="work-heading" aria-labelledby="work-label" className="section selected-work">
       <div className="container">
-        <SectionHeader
-          id="work-label"
-          label="Featured Projects"
-          aside={`${featuredProjects.length} of ${projects.length} curated`}
-        />
-
-        <div>
+        <div className="work-section-heading reveal">
+          <h2 id="work-label">Selected work<span className="work-heading-dot">.</span></h2>
+          <p>Ideas turned into tools.<br />Built, shipped, and kept running.</p>
+        </div>
+        <div className="project-grid">
           {featuredProjects.map((project) => (
-            <FeatureRow key={project.slug} project={project} />
+            <div key={project.slug} className="reveal">
+              <ProjectTile project={project} />
+            </div>
           ))}
         </div>
-
-        <div className="rule" />
-        <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
-          <Link
-            href="/work"
-            className="mono text-xs font-medium text-ink underline underline-offset-4 decoration-rule-strong hover:decoration-ink inline-flex items-center gap-1.5"
-          >
-            <span>View all {projects.length} projects</span>
-            <span aria-hidden="true">→</span>
+        <div className="work-section-footer">
+          <p>A few things I&apos;ve made. There&apos;s more in the collection.</p>
+          <Link href="/work" className="work-all-link">
+            All {projects.length} projects <ProjectArrow />
           </Link>
-          <span className="mono text-xs text-ink-faint">
-            TypeScript · Python · Zig · C++20 · Docker
-          </span>
         </div>
       </div>
     </section>

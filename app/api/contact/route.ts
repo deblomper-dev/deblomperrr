@@ -9,10 +9,8 @@ const MAX_LEN = { name: 100, email: 200, subject: 200, message: 5000 };
 // interpolated into the outbound mail subject, so if the mail API ever writes
 // that value into a raw header, an embedded CRLF could inject headers of its own
 // (Bcc, Reply-To, a second body). Stripping here means that can't reach it.
-// eslint-disable-next-line no-control-regex -- matching control characters is the point
 const CONTROL_CHARS = /[\u0000-\u001F\u007F]+/g;
 // The same set minus tab, CR and LF — whitespace a multi-line body legitimately contains.
-// eslint-disable-next-line no-control-regex -- matching control characters is the point
 const CONTROL_CHARS_KEEP_BREAKS = /[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]+/g;
 
 function clean(value: unknown, max: number, multiline = false): string {

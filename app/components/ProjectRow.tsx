@@ -1,175 +1,169 @@
 import Link from "next/link";
+import type { CSSProperties } from "react";
 import type { Project } from "@/lib/data/types";
 
-/** Derives the honest status from what the project actually exposes. */
+import "./projects.css";
+
 export function status(project: Project) {
-  if (project.liveUrl) return { text: "Live", live: true };
-  if (project.source === "public") return { text: "Open source", live: false };
-  return { text: "Private", live: false };
+  if (project.liveUrl) return { text: "Available live", live: true, statusClass: "dot" };
+  if (project.source === "public") return { text: "Open source", live: false, statusClass: "dot dot-amber" };
+  return { text: "Private source", live: false, statusClass: "dot dot-idle" };
 }
 
 export function host(url: string) {
   return url.replace(/^https?:\/\//, "").replace(/\/$/, "");
 }
 
-function Dot({ live }: { live: boolean }) {
-  return <span aria-hidden="true" className={`dot${live ? "" : " dot-idle"}`} />;
+export function ProjectArrow({ direction = "right" }: { direction?: "right" | "left" | "external" }) {
+  return (
+    <svg className={`project-arrow project-arrow--${direction}`} width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
 }
 
-/** Homepage treatment: scannable modern project card. */
-export function FeatureRow({ project }: { project: Project }) {
-  const { text, live } = status(project);
+function Envelope() {
+  return (
+    <svg viewBox="0 0 240 160" fill="none">
+      <rect x="1" y="1" width="238" height="158" rx="12" fill="currentColor" />
+      <path d="m7 9 113 85L233 9M7 151l75-63m151 63-75-63" stroke="var(--envelope-fold)" strokeWidth="2" />
+    </svg>
+  );
+}
+
+/** Abstract covers illustrate each project's purpose without inventing product screens. */
+export function ProjectArtwork({ project }: { project: Project }) {
+  const kind = project.featured ? project.slug : "other";
 
   return (
-    <article className="reveal row py-7 sm:py-8 group">
-      <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1">
-        <span className="mono text-xs font-medium text-ink inline-flex items-center gap-2">
-          <Dot live={live} />
-          {text}
-        </span>
-        <span className="mono text-xs text-ink-faint">
-          {project.kind} <span className="text-rule-strong">/</span> {project.lang}{" "}
-          <span className="text-rule-strong">/</span> {project.since.slice(0, 4)}
-        </span>
+    <div className={`project-artwork project-artwork--${kind}`} data-motion-reveal aria-hidden="true">
+      {kind === "halvo" ? (
+        <div className="project-artwork-geometry deployment-art">
+          <svg viewBox="0 0 600 300" fill="none">
+            <path d="M70 222h108V98h116v110h122V76h114" stroke="#969bc5" strokeWidth="2" />
+            <circle cx="70" cy="222" r="6" fill="#202331" />
+            <circle cx="530" cy="76" r="6" fill="#2947e8" />
+          </svg>
+          <span className="deployment-stage deployment-stage-one"><svg viewBox="0 0 600 300" fill="none">
+            <rect x="151" y="153" width="116" height="116" rx="16" fill="#202331" />
+            <path d="M182 187h20v20h-20zm33 0h20v20h-20zm-33 33h20v20h-20zm33 0h20v20h-20z" fill="#dedff3" />
+          </svg></span>
+          <span className="deployment-stage deployment-stage-two"><svg viewBox="0 0 600 300" fill="none">
+            <rect x="242" y="94" width="116" height="116" rx="16" fill="#f7f7f2" />
+            <path d="m284 133-18 19 18 19m32-38 18 19-18 19" stroke="#2947e8" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round" />
+          </svg></span>
+          <span className="deployment-stage deployment-stage-three"><svg viewBox="0 0 600 300" fill="none">
+            <rect x="333" y="35" width="116" height="116" rx="16" fill="#2947e8" />
+            <path d="M391 119V69m-21 20 21-21 21 21" stroke="#f7f7f2" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round" />
+          </svg></span>
+        </div>
+      ) : kind === "nubmail" ? (
+        <div className="mail-art">
+          <div className="mail-envelope mail-envelope--back"><span className="mail-envelope-art"><Envelope /></span></div>
+          <div className="mail-envelope mail-envelope--middle"><span className="mail-envelope-art"><Envelope /></span></div>
+          <div className="mail-envelope mail-envelope--front"><span className="mail-envelope-art"><Envelope /></span></div>
+        </div>
+      ) : kind === "ytube-api" ? (
+        <div className="project-artwork-geometry stream-art">
+          <span className="stream-art-reveal">
+          <svg viewBox="0 0 600 300" fill="none">
+            <path d="M-45 70h155c84 0 84 160 168 160h367" stroke="#dc8869" strokeWidth="24" />
+            <path d="M-45 112h155c84 0 84 76 168 76h367" stroke="#202331" strokeWidth="24" />
+            <path d="M-45 154h155c84 0 84-8 168-8h367" stroke="#f7f7f2" strokeWidth="24" />
+            <path d="M-45 196h155c84 0 84-92 168-92h367" stroke="#2947e8" strokeWidth="24" />
+            <circle cx="362" cy="150" r="64" fill="#f7f7f2" />
+            <path d="m348 121 42 29-42 29v-58Z" fill="#202331" />
+          </svg>
+          </span>
+        </div>
+      ) : kind === "nub-music-bot" ? (
+        <div className="music-art">
+          {[42, 80, 126, 174, 110, 66, 150, 202, 146, 96, 58, 28].map((height, index) => (
+            <span key={index} className="music-bar" style={{ height, "--bar-index": index } as CSSProperties} />
+          ))}
+        </div>
+      ) : (
+        <div className="project-artwork-geometry tools-art">
+          <svg viewBox="0 0 600 300" fill="none">
+            <rect x="166" y="50" width="190" height="190" rx="20" fill="#2947e8" />
+            <circle cx="371" cy="161" r="85" fill="#dcebb8" />
+            <path d="m230 111-38 39 38 39m51-78 38 39-38 39" stroke="#f7f7f2" strokeWidth="7" strokeLinecap="round" strokeLinejoin="round" />
+            <path d="M343 161h56m-28-28v56" stroke="#202331" strokeWidth="6" strokeLinecap="round" />
+          </svg>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function ProjectLinks({ project }: { project: Project }) {
+  return (
+    <div className="project-links">
+      <Link href={`/work/${project.slug}`} className="project-detail-link">
+        Explore project <ProjectArrow />
+      </Link>
+      <div className="project-external-links">
+        {project.liveUrl ? (
+          <a href={project.liveUrl} target="_blank" rel="noreferrer noopener" aria-label={`Visit ${project.name} live site`}>
+            Live <ProjectArrow direction="external" />
+          </a>
+        ) : null}
+        {project.codeUrl ? (
+          <a href={project.codeUrl} target="_blank" rel="noreferrer noopener" aria-label={`View ${project.name} source code`}>
+            Source <ProjectArrow direction="external" />
+          </a>
+        ) : null}
       </div>
+    </div>
+  );
+}
 
-      <div className="mt-4 grid gap-x-10 gap-y-4 md:grid-cols-[minmax(0,0.7fr)_minmax(0,1.3fr)]">
-        <div>
-          <h3 className="text-lg font-semibold text-ink">
-            <Link
-              href={`/work/${project.slug}`}
-              className="inline-flex items-baseline gap-2 transition-colors hover:text-ink-muted"
-            >
-              {project.name}
-              <span aria-hidden="true" className="mono text-sm arrow">
-                →
-              </span>
-            </Link>
-          </h3>
-          <p className="mono text-xs text-ink-faint mt-1">
-            {project.tags.slice(0, 3).join(" · ")}
-          </p>
+export function ProjectTile({ project }: { project: Project }) {
+  return (
+    <article className="project-tile">
+      <Link href={`/work/${project.slug}`} className="project-cover-link" aria-label={`Explore ${project.name}`}>
+        <ProjectArtwork project={project} />
+        <span className="project-cover-action"><ProjectArrow /></span>
+      </Link>
+      <div className="project-tile-content">
+        <div className="project-title-row">
+          <h3><Link href={`/work/${project.slug}`}>{project.name}</Link></h3>
+          <span>{project.kind}</span>
         </div>
-
-        <div>
-          <p className="text-sm leading-relaxed text-ink-muted measure">{project.summary}</p>
-
-          <div className="mt-4 flex flex-wrap items-center gap-3">
-            <Link
-              href={`/work/${project.slug}`}
-              className="mono text-xs font-medium text-ink underline underline-offset-4 decoration-rule-strong hover:decoration-ink inline-flex items-center gap-1"
-            >
-              <span>Case study & architecture</span>
-              <span aria-hidden="true" className="arrow">→</span>
-            </Link>
-
-            {project.liveUrl ? (
-              <a
-                href={project.liveUrl}
-                target="_blank"
-                rel="noreferrer noopener"
-                className="row-aside mono text-xs text-ink-faint inline-flex items-center gap-1 hover:text-ink transition-colors"
-              >
-                <span>{host(project.liveUrl)}</span>
-                <span aria-hidden="true" className="arrow">↗</span>
-              </a>
-            ) : null}
-
-            {project.codeUrl ? (
-              <a
-                href={project.codeUrl}
-                target="_blank"
-                rel="noreferrer noopener"
-                className="row-aside mono text-xs text-ink-faint inline-flex items-center gap-1 hover:text-ink transition-colors"
-              >
-                <span>source</span>
-                <span aria-hidden="true" className="arrow">↗</span>
-              </a>
-            ) : null}
-          </div>
-        </div>
+        <p className="project-summary">{project.summary}</p>
+        <ProjectLinks project={project} />
       </div>
     </article>
   );
 }
 
-/** Work index treatment: a clean catalogue line. */
-export function IndexRow({ project, n }: { project: Project; n: number }) {
-  const { text, live } = status(project);
+export function SystemArtifactRow({ project }: { project: Project }) {
+  return <ProjectTile project={project} />;
+}
+
+export function CompactLogItem({ project }: { project: Project }) {
+  return <ProjectTile project={project} />;
+}
+
+export function IndexRow({ project }: { project: Project; n?: number }) {
+  const { text, statusClass } = status(project);
 
   return (
-    <article className="reveal row py-6 transition-all duration-200 hover:bg-bone-2/50 group">
-      <div className="grid grid-cols-[1.75rem_minmax(0,1fr)] gap-x-4 sm:grid-cols-[2.25rem_minmax(0,1fr)_auto] sm:gap-x-6">
-        <span className="mono text-xs text-ink-faint pt-1">{String(n).padStart(2, "0")}</span>
-
-        <div>
-          <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-            <h2 className="text-base font-semibold text-ink">
-              <Link
-                href={`/work/${project.slug}`}
-                className="inline-flex items-baseline gap-1.5 hover:text-ink-muted transition-colors"
-              >
-                {project.name}
-                <span aria-hidden="true" className="mono text-xs arrow">
-                  →
-                </span>
-              </Link>
-            </h2>
-            <span className="mono text-xs text-ink-faint sm:hidden">
-              {project.lang} · {project.kind}
-            </span>
-          </div>
-
-          <p className="mt-1.5 text-sm text-ink-muted measure">{project.summary}</p>
-
-          <div className="mt-3 flex flex-wrap items-center gap-3">
-            <ul className="flex flex-wrap gap-x-2 gap-y-1">
-              {project.tags.slice(0, 4).map((tag) => (
-                <li
-                  key={tag}
-                  className="tag-hover mono text-[11px] rounded border border-rule/60 bg-bone-2 px-1.5 py-0.5 text-ink-muted"
-                >
-                  {tag}
-                </li>
-              ))}
-            </ul>
-
-            {project.liveUrl ? (
-              <a
-                href={project.liveUrl}
-                target="_blank"
-                rel="noreferrer noopener"
-                className="mono text-xs text-ink-faint hover:text-ink inline-flex items-center gap-0.5 transition-colors"
-              >
-                <span>demo</span>
-                <span className="arrow">↗</span>
-              </a>
-            ) : null}
-
-            {project.codeUrl ? (
-              <a
-                href={project.codeUrl}
-                target="_blank"
-                rel="noreferrer noopener"
-                className="mono text-xs text-ink-faint hover:text-ink inline-flex items-center gap-0.5 transition-colors"
-              >
-                <span>code</span>
-                <span className="arrow">↗</span>
-              </a>
-            ) : null}
-          </div>
+    <article className="project-index-row">
+      <div className="project-index-main">
+        <div className="project-title-row">
+          <h2><Link href={`/work/${project.slug}`}>{project.name} <ProjectArrow /></Link></h2>
+          <span>{project.kind}</span>
         </div>
-
-        <div className="col-start-3 hidden shrink-0 text-right sm:block">
-          <span className="mono text-xs font-medium text-ink inline-flex items-center gap-1.5 pt-1">
-            <Dot live={live} />
-            {text}
-          </span>
-          <p className="mono text-xs text-ink-faint mt-1">{project.kind}</p>
-          <p className="mono text-xs text-ink-faint">
-            {project.lang} <span className="text-rule-strong">/</span> {project.since.slice(0, 4)}
-          </p>
-        </div>
+        <p className="project-summary">{project.summary}</p>
+        <ul className="project-tag-list" aria-label={`${project.name} technologies`}>
+          {project.tags.map((tag) => <li key={tag}>{tag}</li>)}
+        </ul>
+      </div>
+      <div className="project-index-aside">
+        <span className="project-status"><span aria-hidden="true" className={statusClass} />{text}</span>
+        <span className="project-since">Started {project.since}</span>
+        <ProjectLinks project={project} />
       </div>
     </article>
   );

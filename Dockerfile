@@ -1,4 +1,4 @@
-FROM node:20-alpine AS base
+FROM node:24-alpine AS base
 
 # Step 1. Install dependencies and build the application
 FROM base AS builder
@@ -9,9 +9,13 @@ RUN npm ci
 
 COPY . .
 
+ARG NEXT_PUBLIC_TURNSTILE_SITE_KEY
+ENV NEXT_PUBLIC_TURNSTILE_SITE_KEY=$NEXT_PUBLIC_TURNSTILE_SITE_KEY
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV NODE_ENV=production
 
+RUN test -n "$NEXT_PUBLIC_TURNSTILE_SITE_KEY" || \
+    (echo "NEXT_PUBLIC_TURNSTILE_SITE_KEY must be provided as a build argument" >&2; exit 1)
 RUN npm run build
 
 # Step 2. Production runner

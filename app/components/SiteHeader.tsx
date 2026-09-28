@@ -6,24 +6,26 @@ import { site } from "@/lib/data/site";
 
 export function SiteHeader() {
   return (
-    <header className="sticky top-0 z-50 bg-bone/95 backdrop-blur-xs">
+    <header className="site-header">
       <div className="container">
-        <div className="flex h-14 items-center justify-between gap-4">
+        <div className="header-inner">
           <Link
             href="/"
-            className="flex items-center gap-2 py-2 text-sm font-medium text-ink transition-colors hover:text-ink-muted"
+            className="site-brand"
+            aria-label={`${site.name} — home`}
           >
-            <span>{site.name}</span>
-            <span className="text-xs text-ink-faint">/</span>
-            <span className="mono text-xs text-ink-faint">{site.handle}</span>
+            <svg className="brand-mark" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+              <path d="M16 3v26M3 16h26M7 7l18 18M7 25 25 7" stroke="currentColor" strokeWidth="6" />
+            </svg>
+            <span>ankit<span className="brand-dot">.</span></span>
           </Link>
-          <div className="flex items-center gap-3">
+          <div className="header-actions">
             <NavLinks />
             <ThemeToggle />
           </div>
         </div>
       </div>
-      <div className="rule" />
+      <div className="scroll-progress" aria-hidden="true" />
     </header>
   );
 }

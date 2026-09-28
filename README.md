@@ -77,3 +77,13 @@ Building production web apps and API services with **TypeScript, React, Node.js,
 
 <!-- GITHUB_STATS_START -->
 <!-- GITHUB_STATS_END -->
+
+# Development and deployment
+
+Use Node.js 24 LTS. Run `npm ci`, then `npm run dev` for local development. The checks are `npm run lint`, `npm test`, and `npm run build`. Tests use the locked local `tsx` dependency.
+
+Copy `.env.example` to `.env` and configure the mail API and Cloudflare Turnstile keys. Production contact submissions require `TURNSTILE_SECRET_KEY`; missing verification configuration rejects submissions. The GitHub SVG endpoints require `GITHUB_TOKEN` and support valid GitHub usernames with bounded caching and upstream request limits.
+
+Docker builds exclude environment files and use only the public `NEXT_PUBLIC_TURNSTILE_SITE_KEY` build argument. Compose passes this value from the shell or `.env`; rebuild the image after changing it. Mail credentials, the Turnstile secret, and the GitHub token are supplied at runtime through Compose's environment configuration.
+
+The Compose deployment expects an existing `web` network with Traefik configured for the `websecure` entrypoint and `letsencrypt` resolver. Deploy with `docker compose up -d --build`. For a direct image build, pass `--build-arg NEXT_PUBLIC_TURNSTILE_SITE_KEY=your_public_site_key` to `docker build`.

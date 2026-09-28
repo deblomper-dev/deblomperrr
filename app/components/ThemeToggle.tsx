@@ -17,10 +17,9 @@ export function ThemeToggle() {
       type="button"
       onClick={toggle}
       aria-label="Toggle theme"
-      className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-rule text-faint transition-colors duration-150 hover:border-rule-strong hover:text-ink"
+      className="theme-toggle"
     >
-      <svg
-        className="theme-icon-dark"
+      <span className="theme-icon-dark" aria-hidden="true"><svg
         width="15"
         height="15"
         viewBox="0 0 24 24"
@@ -32,9 +31,8 @@ export function ThemeToggle() {
         aria-hidden="true"
       >
         <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
-      </svg>
-      <svg
-        className="theme-icon-light"
+      </svg></span>
+      <span className="theme-icon-light" aria-hidden="true"><svg
         width="15"
         height="15"
         viewBox="0 0 24 24"
@@ -54,7 +52,7 @@ export function ThemeToggle() {
         <line x1="21" y1="12" x2="23" y2="12" />
         <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
         <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
-      </svg>
+      </svg></span>
     </button>
   );
 }

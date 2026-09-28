@@ -1,102 +1,181 @@
 const GRAPHQL = "https://api.github.com/graphql";
-const TIMEOUT_MS = 15_000;
+export const GITHUB_TIMEOUT_MS = 15_000;
+
+const CONTRIBUTIONS_QUERY = `query Contributions($username: String!, $from: DateTime!, $to: DateTime!) {
+  user(login: $username) {
+    contributionsCollection(from: $from, to: $to) {
+      contributionCalendar {
+        weeks {
+          contributionDays {
+            contributionCount
+            date
+          }
+        }
+      }
+    }
+  }
+}`;
 
 export interface ContributionDay {
   contributionCount: number;
   date: string;
 }
 
-const CACHE_TTL_MS = 10 * 60 * 1000; // 10 minutes
+export const GITHUB_CACHE_TTL_MS = 10 * 60 * 1000;
+export const GITHUB_CACHE_MAX_AGE_MS = 24 * 60 * 60 * 1000;
+export const GITHUB_CACHE_MAX_USERS = 100;
+export const GITHUB_REQUEST_WINDOW_MS = 10 * 60 * 1000;
+export const GITHUB_PUBLIC_REQUEST_LIMIT = 60;
+export const GITHUB_PUBLIC_CONCURRENCY = 4;
+
 const cacheMap = new Map<string, { data: ContributionDay[]; at: number }>();
 const inflightMap = new Map<string, Promise<ContributionDay[]>>();
 
+// The configured profile has its own small allowance so arbitrary usernames
+// cannot consume the requests needed by the portfolio's own graphs.
+const publicBudget = { timestamps: [] as number[], active: 0, limit: GITHUB_PUBLIC_REQUEST_LIMIT, concurrency: GITHUB_PUBLIC_CONCURRENCY };
+const profileBudget = { timestamps: [] as number[], active: 0, limit: 6, concurrency: 1 };
+
+export class GitHubRequestLimitError extends Error {
+  constructor(public readonly retryAfter: number) {
+    super("GitHub contribution request budget exhausted.");
+    this.name = "GitHubRequestLimitError";
+  }
+}
+
+export function normalizeGitHubUsername(username: string): string {
+  if (!/^[a-z\d](?:[a-z\d-]{0,37}[a-z\d])?$/i.test(username) || username.includes("--")) {
+    throw new Error("Invalid GitHub username.");
+  }
+  return username.toLowerCase();
+}
+
+function defaultUsername(): string {
+  return normalizeGitHubUsername(process.env.GITHUB_USERNAME || "nub-coders");
+}
+
+function reserveRequest(username: string): () => void {
+  const budget = username === defaultUsername() ? profileBudget : publicBudget;
+  const now = Date.now();
+  budget.timestamps = budget.timestamps.filter((at) => now - at < GITHUB_REQUEST_WINDOW_MS);
+  if (budget.timestamps.length >= budget.limit) {
+    throw new GitHubRequestLimitError(Math.max(1, Math.ceil((budget.timestamps[0] + GITHUB_REQUEST_WINDOW_MS - now) / 1000)));
+  }
+  if (budget.active >= budget.concurrency) {
+    throw new GitHubRequestLimitError(Math.ceil(GITHUB_TIMEOUT_MS / 1000));
+  }
+  budget.timestamps.push(now);
+  budget.active++;
+  return () => { budget.active--; };
+}
+
+function readCache(username: string) {
+  const now = Date.now();
+  for (const [key, entry] of cacheMap) {
+    if (now - entry.at >= GITHUB_CACHE_MAX_AGE_MS) cacheMap.delete(key);
+  }
+  const cached = cacheMap.get(username);
+  if (cached) {
+    cacheMap.delete(username);
+    cacheMap.set(username, cached);
+  }
+  return cached;
+}
+
+function writeCache(username: string, data: ContributionDay[]) {
+  cacheMap.delete(username);
+  cacheMap.set(username, { data, at: Date.now() });
+  while (cacheMap.size > GITHUB_CACHE_MAX_USERS) {
+    const oldest = cacheMap.keys().next().value;
+    if (oldest === undefined) break;
+    cacheMap.delete(oldest);
+  }
+}
+
+/** Reset settled state between isolated tests; callers must await active requests first. */
+export function resetContributionState(): void {
+  cacheMap.clear();
+  inflightMap.clear();
+  for (const budget of [publicBudget, profileBudget]) {
+    budget.timestamps = [];
+    budget.active = 0;
+  }
+}
+
 async function fetchContributionsFromAPI(token: string, username: string): Promise<ContributionDay[]> {
+  const releaseRequest = reserveRequest(username);
   const now = new Date();
   const oneYearAgo = new Date(now);
   oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
 
-  const query = `query {
-    user(login: "${username}") {
-      contributionsCollection(from: "${oneYearAgo.toISOString()}", to: "${now.toISOString()}") {
-        contributionCalendar {
-          totalContributions
-          weeks {
-            contributionDays {
-              contributionCount
-              date
-            }
-          }
-        }
-      }
-    }
-  }`;
-
   const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), TIMEOUT_MS);
+  const timer = setTimeout(() => controller.abort(), GITHUB_TIMEOUT_MS);
 
-  let res: Response;
   try {
-    res = await fetch(GRAPHQL, {
+    const res = await fetch(GRAPHQL, {
       method: "POST",
       headers: {
         Authorization: `bearer ${token}`,
         "Content-Type": "application/json",
         "User-Agent": "deblomperr-portfolio",
       },
-      body: JSON.stringify({ query }),
+      body: JSON.stringify({
+        query: CONTRIBUTIONS_QUERY,
+        variables: { username, from: oneYearAgo.toISOString(), to: now.toISOString() },
+      }),
       signal: controller.signal,
     });
-  } catch (err: unknown) {
-    const error = err as Error;
-    if (error?.name === "AbortError") {
-      throw new Error(`GitHub GraphQL API timeout after ${TIMEOUT_MS}ms`);
+
+    if (!res.ok) {
+      throw new Error(`GitHub GraphQL API error: ${res.status}`);
     }
-    throw error;
-  } finally {
-    clearTimeout(timer);
-  }
 
-  if (!res.ok) {
-    throw new Error(`GitHub GraphQL API error: ${res.status}`);
-  }
-
-  interface ContributionsResponse {
-    data?: {
-      user: {
-        contributionsCollection: {
-          contributionCalendar: {
-            weeks: { contributionDays: ContributionDay[] }[];
+    interface ContributionsResponse {
+      data?: {
+        user: {
+          contributionsCollection: {
+            contributionCalendar: {
+              weeks: { contributionDays: ContributionDay[] }[];
+            };
           };
         };
       };
-    };
-    errors?: { message: string }[];
-  }
-
-  const json = (await res.json()) as ContributionsResponse;
-  if (json.errors) {
-    throw new Error(`GraphQL error: ${json.errors[0]?.message}`);
-  }
-
-  const weeks = json.data?.user?.contributionsCollection?.contributionCalendar?.weeks;
-  if (!weeks) {
-    throw new Error("Invalid GraphQL contributions response structure");
-  }
-
-  const days: ContributionDay[] = [];
-  for (const week of weeks) {
-    for (const day of week.contributionDays) {
-      days.push(day);
+      errors?: { message: string }[];
     }
+
+    const json = (await res.json()) as ContributionsResponse;
+    if (json.errors) {
+      throw new Error(`GraphQL error: ${json.errors[0]?.message}`);
+    }
+
+    const weeks = json.data?.user?.contributionsCollection?.contributionCalendar?.weeks;
+    if (!weeks) {
+      throw new Error("Invalid GraphQL contributions response structure");
+    }
+
+    const days: ContributionDay[] = [];
+    for (const week of weeks) {
+      for (const day of week.contributionDays) {
+        days.push(day);
+      }
+    }
+    return days;
+  } catch (err: unknown) {
+    if (controller.signal.aborted) {
+      throw new Error(`GitHub GraphQL API timeout after ${GITHUB_TIMEOUT_MS}ms`);
+    }
+    throw err;
+  } finally {
+    clearTimeout(timer);
+    releaseRequest();
   }
-  return days;
 }
 
 export async function fetchContributions(token?: string, username?: string, force = false): Promise<ContributionDay[]> {
   const effectiveToken = token || process.env.GITHUB_TOKEN;
-  const effectiveUsername = username || process.env.GITHUB_USERNAME || "nub-coders";
+  const effectiveUsername = username ? normalizeGitHubUsername(username) : defaultUsername();
 
-  const cached = cacheMap.get(effectiveUsername);
+  const cached = readCache(effectiveUsername);
 
   if (!effectiveToken) {
     if (cached?.data) {
@@ -106,7 +185,7 @@ export async function fetchContributions(token?: string, username?: string, forc
   }
 
   // Fresh cache hit
-  if (!force && cached && Date.now() - cached.at < CACHE_TTL_MS) {
+  if (!force && cached && Date.now() - cached.at < GITHUB_CACHE_TTL_MS) {
     return cached.data;
   }
 
@@ -119,29 +198,12 @@ export async function fetchContributions(token?: string, username?: string, forc
     return inflight;
   }
 
-  // Stale-While-Revalidate
-  if (!force && cached?.data) {
-    const promise = fetchContributionsFromAPI(effectiveToken, effectiveUsername)
-      .then((days) => {
-        cacheMap.set(effectiveUsername, { data: days, at: Date.now() });
-        return days;
-      })
-      .catch((err) => {
-        console.error("[GitHub Contributions Background Refresh Error]", err?.message ?? err);
-        return cached.data;
-      })
-      .finally(() => {
-        inflightMap.delete(effectiveUsername);
-      });
-    inflightMap.set(effectiveUsername, promise);
-    return cached.data;
-  }
-
-  // Cold fetch
+  // A stale hit returns immediately while one shared refresh updates the cache.
+  // Errors retain that stale data only until its bounded maximum age.
   const promise = (async () => {
     try {
       const days = await fetchContributionsFromAPI(effectiveToken, effectiveUsername);
-      cacheMap.set(effectiveUsername, { data: days, at: Date.now() });
+      writeCache(effectiveUsername, days);
       return days;
     } catch (err: unknown) {
       if (cached?.data) {
@@ -155,5 +217,5 @@ export async function fetchContributions(token?: string, username?: string, forc
   })();
 
   inflightMap.set(effectiveUsername, promise);
-  return promise;
+  return !force && cached ? cached.data : promise;
 }

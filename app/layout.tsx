@@ -1,15 +1,22 @@
 import type { Metadata } from "next";
-import { Inter, JetBrains_Mono } from "next/font/google";
+import { Bricolage_Grotesque, Manrope, JetBrains_Mono } from "next/font/google";
 
 import { RevealObserver } from "./components/RevealObserver";
 import { SiteFooter } from "./components/SiteFooter";
 import { SiteHeader } from "./components/SiteHeader";
 import { site } from "@/lib/data/site";
 import "./globals.css";
+import "./motion.css";
 
-const inter = Inter({
+const manrope = Manrope({
   subsets: ["latin"],
-  variable: "--font-inter",
+  variable: "--font-manrope",
+  display: "swap",
+});
+
+const bricolage = Bricolage_Grotesque({
+  subsets: ["latin"],
+  variable: "--font-bricolage",
   display: "swap",
 });
 
@@ -19,9 +26,9 @@ const jetbrainsMono = JetBrains_Mono({
   display: "swap",
 });
 
-const title = `${site.name} — Full-stack developer`;
+const title = `${site.name} — Backend & Systems Infrastructure Engineer`;
 const description =
-  "Full-stack developer building and operating deployment platforms, self-hosted mail infrastructure and developer tooling. TypeScript, Python, Zig, Docker.";
+  "Backend and systems engineer building container deployment engines, self-hosted mail infrastructure, high-throughput media extraction services, and in-memory key-value databases.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
@@ -32,13 +39,16 @@ export const metadata: Metadata = {
   creator: site.name,
   keywords: [
     "Ankit Kumar",
+    "deblomperrr",
     "deblomperr",
-    "full-stack developer",
+    "Systems Engineer",
+    "Backend Infrastructure",
     "TypeScript",
     "Python",
     "Zig",
-    "Docker",
-    "self-hosted",
+    "C++",
+    "Docker Engine API",
+    "Self-hosted infrastructure",
   ],
   alternates: { canonical: "/" },
   openGraph: {
@@ -66,17 +76,16 @@ export const metadata: Metadata = {
   robots: { index: true, follow: true },
 };
 
-// Runs before first paint: restores the theme and marks the document as
-// scripted so scroll-reveal never hides content when JS is unavailable.
-const boot = `(function(){var d=document.documentElement;d.classList.add("js");try{var t=localStorage.getItem("theme");if(t==="dark"||(!t&&window.matchMedia("(prefers-color-scheme:dark)").matches))d.dataset.theme="dark"}catch(e){}})()`;
+// Apply the saved preference before paint; new visitors start in the dark palette.
+const boot = `(function(){var d=document.documentElement;try{d.dataset.theme=localStorage.getItem("theme")==="light"?"light":"dark"}catch(e){d.dataset.theme="dark"}})()`;
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      data-theme="light"
+      data-theme="dark"
       suppressHydrationWarning
-      className={`${inter.variable} ${jetbrainsMono.variable}`}
+      className={`${manrope.variable} ${bricolage.variable} ${jetbrainsMono.variable}`}
     >
       <head>
         <script dangerouslySetInnerHTML={{ __html: boot }} />
@@ -84,9 +93,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body>
         <a
           href="#main"
-          className="meta meta-strong sr-only focus-visible:not-sr-only focus-visible:fixed focus-visible:top-3 focus-visible:left-3 focus-visible:z-[100] focus-visible:bg-surface focus-visible:px-3 focus-visible:py-2"
+          className="meta font-mono sr-only focus-visible:not-sr-only focus-visible:fixed focus-visible:top-3 focus-visible:left-3 focus-visible:z-[100] focus-visible:bg-surface focus-visible:px-3 focus-visible:py-2 focus-visible:border focus-visible:border-rule"
         >
-          Skip to content
+          Skip to main content
         </a>
         <SiteHeader />
         <main id="main">{children}</main>

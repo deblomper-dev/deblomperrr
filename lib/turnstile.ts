@@ -5,9 +5,9 @@ function secretKey(): string {
   return process.env.TURNSTILE_SECRET_KEY || "";
 }
 
-/** Turnstile is enforced whenever a secret is configured. */
+/** Production always enforces verification, including missing configuration. */
 export function isTurnstileEnabled(): boolean {
-  return Boolean(secretKey());
+  return process.env.NODE_ENV === "production" || Boolean(secretKey());
 }
 
 export type TurnstileResult =
