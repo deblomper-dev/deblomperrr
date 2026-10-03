@@ -3,17 +3,25 @@
   "version": "0.1.0",
   "private": true,
   "author": "Ankit Kumar <contact@deblomper.dev>",
+  "type": "module",
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
+    "dev": "vite",
+    "build": "vite build && esbuild server/index.ts --bundle --platform=node --format=esm --target=node24 --outfile=dist/server.js",
+    "start": "node dist/server.js",
+    "preview": "vite preview",
     "lint": "eslint",
-    "test": "tsx --test lib/*.test.ts lib/github/*.test.ts"
+    "test": "tsx --test lib/*.test.ts lib/github/*.test.ts",
+    "next:dev": "next dev",
+    "next:build": "next build"
   },
   "dependencies": {
+    "@tailwindcss/vite": "^4.3.3",
+    "@vitejs/plugin-react": "^6.1.1",
     "next": "16.3.4",
     "react": "19.2.8",
-    "react-dom": "19.2.8"
+    "react-dom": "19.2.8",
+    "react-router-dom": "^7.18.4",
+    "vite": "^8.3.2"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

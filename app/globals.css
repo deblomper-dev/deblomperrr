@@ -16,6 +16,9 @@
   --live-amber: #9c6815;
   --success: #287140;
   --danger: #b42c37;
+  --font-bricolage: "Bricolage Grotesque", -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-manrope: "Manrope", -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-jetbrains-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
   --font-display: var(--font-bricolage), sans-serif;
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
   --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
