@@ -7,11 +7,17 @@ import "@/app/motion.css";
 
 const rootElement = document.getElementById("root");
 if (rootElement) {
-  ReactDOM.createRoot(rootElement).render(
+  const app = (
     <React.StrictMode>
       <BrowserRouter>
         <App />
       </BrowserRouter>
     </React.StrictMode>
   );
+  if (rootElement.dataset.prerendered === "true") {
+    ReactDOM.hydrateRoot(rootElement, app);
+  } else {
+    // Development and unknown routes start without matching prerendered markup.
+    ReactDOM.createRoot(rootElement).render(app);
+  }
 }

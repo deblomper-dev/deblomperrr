@@ -2,6 +2,8 @@ import type { ContactLink } from "./types";
 
 export const site = {
   name: "Ankit Kumar",
+  alias: "deblomper",
+  aliases: ["deblomper", "deblomperr", "deblomperrr"],
   handle: "deblomperrr",
   domain: "deblomper.dev",
   url: "https://deblomper.dev",

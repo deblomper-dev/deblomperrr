@@ -20,7 +20,7 @@ export function SiteFooter() {
           </Link>
         </div>
         <div className="footer-bottomline">
-          <p>© {year} {site.name}</p>
+          <p>© <span suppressHydrationWarning>{year}</span> {site.name}</p>
           <ul aria-label="Social links">
             {contactLinks.map(({ label, href }) => (
               <li key={label}>

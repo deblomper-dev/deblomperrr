@@ -6,11 +6,12 @@ import { isTurnstileEnabled, verifyTurnstile } from "../lib/turnstile";
 import { getStreakCapsulesSVG } from "../lib/github/streak-stats";
 import { getContributionGraphSVG } from "../lib/github/contribution-graph";
 import { GitHubRequestLimitError, normalizeGitHubUsername } from "../lib/github/contributions";
+import { getCanonicalPagePath } from "../lib/routes";
 
 const PORT = parseInt(process.env.PORT || "3000", 10);
 const HOST = process.env.HOST || "0.0.0.0";
-const DIST_DIR = path.resolve(process.cwd(), "dist");
-const INDEX_HTML = path.join(DIST_DIR, "index.html");
+const DIST_DIR = path.resolve(process.cwd(), "dist/client");
+const NOT_FOUND_HTML = path.join(DIST_DIR, "404.html");
 
 const MIME_TYPES: Record<string, string> = {
   ".html": "text/html; charset=utf-8",
@@ -311,7 +312,12 @@ async function handleGitHub(slug: string, url: URL, res: http.ServerResponse) {
 }
 
 // ── Static File Server with Path Traversal Protection ─────────────────────────
-function serveStaticFile(filePath: string, res: http.ServerResponse): boolean {
+function serveStaticFile(
+  filePath: string,
+  req: http.IncomingMessage,
+  res: http.ServerResponse,
+  statusCode = 200,
+): boolean {
   try {
     const stat = fs.statSync(filePath);
     if (!stat.isFile()) return false;
@@ -320,7 +326,7 @@ function serveStaticFile(filePath: string, res: http.ServerResponse): boolean {
     const contentType = MIME_TYPES[ext] || "application/octet-stream";
     const isImmutable = filePath.includes(`${path.sep}assets${path.sep}`);
 
-    res.writeHead(200, {
+    res.writeHead(statusCode, {
       "Content-Type": contentType,
       "Content-Length": stat.size,
       "Cache-Control": isImmutable
@@ -328,9 +334,14 @@ function serveStaticFile(filePath: string, res: http.ServerResponse): boolean {
         : ext === ".html"
         ? "no-cache"
         : "public, max-age=3600",
+      ...(statusCode === 404 ? { "X-Robots-Tag": "noindex" } : {}),
     });
 
-    fs.createReadStream(filePath).pipe(res);
+    if (req.method === "HEAD") {
+      res.end();
+    } else {
+      fs.createReadStream(filePath).on("error", () => res.destroy()).pipe(res);
+    }
     return true;
   } catch {
     return false;
@@ -339,9 +350,15 @@ function serveStaticFile(filePath: string, res: http.ServerResponse): boolean {
 
 // ── Main Server ──────────────────────────────────────────────────────────────
 const server = http.createServer(async (req, res) => {
-  const host = req.headers.host || "localhost";
-  const url = new URL(req.url || "/", `http://${host}`);
-  const pathname = decodeURIComponent(url.pathname);
+  let url: URL;
+  let pathname: string;
+  try {
+    url = new URL(req.url || "/", "http://localhost");
+    pathname = decodeURIComponent(url.pathname);
+  } catch {
+    res.writeHead(400, { "Content-Type": "text/plain; charset=utf-8" });
+    return res.end(req.method === "HEAD" ? undefined : "Bad Request");
+  }
 
   // 1. API: Contact Form
   if (pathname === "/api/contact") {
@@ -354,33 +371,46 @@ const server = http.createServer(async (req, res) => {
     return handleGitHub(slug, url, res);
   }
 
-  // Only GET & HEAD for static and SPA requests
+  // Only GET & HEAD for static files and prerendered pages.
   if (req.method !== "GET" && req.method !== "HEAD") {
     res.writeHead(405, { "Content-Type": "text/plain" });
     return res.end("Method Not Allowed");
   }
 
-  // 3. Static Files
+  // 3. Canonical page URLs and permanent redirects for published legacy URLs.
+  const canonicalPath = getCanonicalPagePath(pathname);
+  if (canonicalPath) {
+    if (url.pathname !== canonicalPath) {
+      res.writeHead(308, { Location: `${canonicalPath}${url.search}` });
+      return res.end();
+    }
+    const pageFile = path.join(DIST_DIR, canonicalPath.slice(1), "index.html");
+    if (serveStaticFile(pageFile, req, res)) return;
+    res.writeHead(503, { "Content-Type": "text/plain; charset=utf-8", "Retry-After": "60" });
+    return res.end(req.method === "HEAD" ? undefined : "Page temporarily unavailable");
+  }
+
+  // 4. Static Files
   // Resolve path safely inside DIST_DIR
   const sanitizedPath = path.normalize(pathname).replace(/^(\.\.[\/\\])+/, "");
   const targetFile = path.resolve(DIST_DIR, sanitizedPath.replace(/^\//, ""));
 
   // Enforce boundary check to prevent directory traversal
   if (targetFile.startsWith(DIST_DIR + path.sep) || targetFile === DIST_DIR) {
-    if (serveStaticFile(targetFile, res)) {
+    if (serveStaticFile(targetFile, req, res, pathname === "/404.html" ? 404 : 200)) {
       return;
     }
   }
 
-  // 4. SPA Fallback: Serve index.html for React Router routes (e.g. /work, /work/:slug)
-  if (!pathname.startsWith("/api/")) {
-    if (serveStaticFile(INDEX_HTML, res)) {
+  // 5. Unknown pages must be actual 404s, not successful copies of the homepage.
+  if (!pathname.startsWith("/api/") && (!path.extname(pathname) || path.extname(pathname) === ".html")) {
+    if (serveStaticFile(NOT_FOUND_HTML, req, res, 404)) {
       return;
     }
   }
 
-  res.writeHead(404, { "Content-Type": "text/plain" });
-  res.end("Not Found");
+  res.writeHead(404, { "Content-Type": "text/plain; charset=utf-8", "X-Robots-Tag": "noindex" });
+  res.end(req.method === "HEAD" ? undefined : "Not Found");
 });
 
 server.listen(PORT, HOST, () => {

@@ -21,6 +21,9 @@ export default defineConfig({
       "next/navigation": path.resolve(__dirname, "./src/shims/next-navigation.ts"),
     },
   },
+  build: {
+    outDir: "dist/client",
+  },
   server: {
     port: 3000,
     host: true,

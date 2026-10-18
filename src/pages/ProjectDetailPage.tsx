@@ -1,21 +1,11 @@
-import { useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { host, ProjectArrow, ProjectArtwork, status } from "@/app/components/ProjectRow";
 import { getProject, projects } from "@/lib/data/projects";
-import { site } from "@/lib/data/site";
 import { NotFoundPage } from "./NotFoundPage";
 
 export function ProjectDetailPage() {
   const { slug } = useParams<{ slug: string }>();
   const project = slug ? getProject(slug) : undefined;
-
-  useEffect(() => {
-    if (project) {
-      document.title = `${project.name} — ${project.kind} | ${site.name}`;
-      const meta = document.querySelector('meta[name="description"]');
-      if (meta) meta.setAttribute("content", project.summary);
-    }
-  }, [project]);
 
   if (!project) {
     return <NotFoundPage />;

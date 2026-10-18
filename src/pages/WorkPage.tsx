@@ -1,16 +1,10 @@
-import { useEffect } from "react";
 import { IndexRow, ProjectTile } from "@/app/components/ProjectRow";
 import { projects } from "@/lib/data/projects";
-import { site } from "@/lib/data/site";
 
 const liveCount = projects.filter((project) => project.liveUrl).length;
 const publicCount = projects.filter((project) => project.source === "public").length;
 
 export function WorkPage() {
-  useEffect(() => {
-    document.title = `Systems & Architecture — ${site.name}`;
-  }, []);
-
   return (
     <section aria-labelledby="work-title" className="work-index-page">
       <div className="container">

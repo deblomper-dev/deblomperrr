@@ -6,11 +6,12 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build && esbuild server/index.ts --bundle --platform=node --format=esm --target=node24 --outfile=dist/server.js",
+    "build": "vite build && vite build --ssr src/entry-server.tsx --outDir dist/prerender && node scripts/prerender.mjs && esbuild server/index.ts --bundle --platform=node --format=esm --target=node24 --outfile=dist/server.js",
     "start": "node dist/server.js",
     "preview": "vite preview",
     "lint": "eslint",
     "test": "tsx --test lib/*.test.ts lib/github/*.test.ts",
+    "test:seo": "node --test scripts/seo-smoke.test.mjs",
     "next:dev": "next dev",
     "next:build": "next build"
   },

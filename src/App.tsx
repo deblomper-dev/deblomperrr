@@ -7,6 +7,7 @@ import { HomePage } from "@/src/pages/HomePage";
 import { WorkPage } from "@/src/pages/WorkPage";
 import { ProjectDetailPage } from "@/src/pages/ProjectDetailPage";
 import { NotFoundPage } from "@/src/pages/NotFoundPage";
+import { PageMetadata } from "@/src/PageMetadata";
 
 function ScrollToTopAndHash() {
   const { pathname, hash } = useLocation();
@@ -33,6 +34,7 @@ function ScrollToTopAndHash() {
 export function App() {
   return (
     <>
+      <PageMetadata />
       <a
         href="#main"
         className="meta font-mono sr-only focus-visible:not-sr-only focus-visible:fixed focus-visible:top-3 focus-visible:left-3 focus-visible:z-[100] focus-visible:bg-surface focus-visible:px-3 focus-visible:py-2 focus-visible:border focus-visible:border-rule"

@@ -6,7 +6,6 @@ export type LinkProps = Omit<RouterLinkProps, "to"> & {
   to?: string;
   children?: React.ReactNode;
   className?: string;
-  [key: string]: any;
 };
 
 export const Link = React.forwardRef<HTMLAnchorElement, LinkProps>(

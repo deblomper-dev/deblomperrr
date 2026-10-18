@@ -1,11 +1,6 @@
-import { useEffect } from "react";
 import { Link } from "react-router-dom";
 
 export function NotFoundPage() {
-  useEffect(() => {
-    document.title = "Page Not Found — Ankit Kumar";
-  }, []);
-
   return (
     <section className="section">
       <div className="container">
