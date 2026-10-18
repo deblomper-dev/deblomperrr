@@ -10,10 +10,9 @@ function readStructuredData(markup: string) {
   return JSON.parse(match[1]) as { "@graph": Record<string, unknown>[] };
 }
 
-test("the home page connects deblomper with Ankit Kumar and the real social accounts", () => {
+test("the home page names Ankit Kumar and connects his aliases and real social accounts", () => {
   const metadata = getPageMetadata("/");
-  assert.match(metadata.title, /deblomper/);
-  assert.match(metadata.title, /Ankit Kumar/);
+  assert.equal(metadata.title, "Ankit Kumar (deblomper) — Full-stack Developer");
   assert.match(metadata.description, /deblomper/);
   assert.equal(metadata.canonical, "https://deblomper.dev/");
   assert.equal(metadata.robots, "index, follow");
@@ -24,7 +23,9 @@ test("the home page connects deblomper with Ankit Kumar and the real social acco
   assert.equal(person.name, "Ankit Kumar");
   assert.deepEqual(person.alternateName, ["deblomper", "deblomperr", "deblomperrr"]);
   assert.ok((person.sameAs as string[]).includes("https://github.com/deblomperrr"));
-  assert.ok(graph.some((node) => node["@type"] === "WebSite"));
+  const website = graph.find((node) => node["@type"] === "WebSite");
+  assert.equal(website?.name, "Ankit Kumar");
+  assert.deepEqual(website?.alternateName, ["deblomper", "deblomper.dev"]);
 });
 
 test("each current project has a unique canonical, description and project schema", () => {
@@ -35,7 +36,7 @@ test("each current project has a unique canonical, description and project schem
     assert.equal(metadata.canonical, `${site.url}${pathname}`);
     assert.equal(metadata.description, project.summary);
     assert.ok(metadata.title.includes(project.name));
-    assert.ok(metadata.title.includes("deblomper"));
+    assert.ok(metadata.title.endsWith("| Ankit Kumar"));
     assert.equal(metadata.robots, "index, follow");
     titles.add(metadata.title);
 
@@ -49,6 +50,7 @@ test("each current project has a unique canonical, description and project schem
 
 test("work listing metadata includes current project URLs", () => {
   const metadata = getPageMetadata("/work");
+  assert.equal(metadata.title, "Projects — Ankit Kumar");
   assert.equal(metadata.canonical, `${site.url}/work`);
   assert.notEqual(metadata.title, getPageMetadata("/").title);
   const markup = renderPageMetadata("/work");
@@ -64,6 +66,7 @@ test("query strings and trailing slashes do not produce duplicate canonical URLs
 test("missing and legacy project paths cannot inherit indexable home metadata", () => {
   for (const pathname of ["/missing", "/work/missing", "/work/container-deployment-engine", "/work/halvo/extra"]) {
     const metadata = getPageMetadata(pathname);
+    assert.equal(metadata.title, "Page not found — Ankit Kumar");
     assert.equal(metadata.robots, "noindex, follow");
     assert.equal(metadata.canonical, undefined);
     const markup = renderPageMetadata(pathname);
@@ -79,6 +82,8 @@ test("all managed head elements are replaceable and use working textual sharing 
   assert.ok(openingTags.length > 0);
   assert.ok(openingTags.every((tag) => tag.includes("data-page-meta")));
   assert.match(markup, /property="og:title"/);
+  assert.match(markup, /name="application-name" content="Ankit Kumar"/);
+  assert.match(markup, /property="og:site_name" content="Ankit Kumar"/);
   assert.match(markup, /name="twitter:card" content="summary"/);
   assert.ok(!markup.includes("opengraph-image"));
 });

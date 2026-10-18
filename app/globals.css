@@ -99,8 +99,8 @@
   .text-link svg { transition: transform 200ms var(--ease-out); }
   .site-header { position: sticky; top: 0; z-index: 50; background: var(--bone); border-bottom: 1px solid var(--rule); }
   .header-inner { height: 88px; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
-  .site-brand { display: flex; align-items: center; gap: 12px; font-family: var(--font-display); font-size: 32px; font-weight: 750; letter-spacing: -0.04em; line-height: 1; }
-  .brand-mark { width: 29px; height: 29px; color: var(--accent); }
+  .site-brand { display: flex; flex-shrink: 0; align-items: center; gap: 12px; font-family: var(--font-display); font-size: 32px; font-weight: 750; letter-spacing: -0.04em; line-height: 1; white-space: nowrap; }
+  .brand-mark { flex-shrink: 0; width: 29px; height: 29px; color: var(--accent); }
   .brand-dot { color: var(--accent); }
   .header-actions { display: flex; align-items: center; gap: 24px; }
   .nav-link { display: block; padding: 12px 18px; font-size: 14px; font-weight: 600; transition: color 150ms ease; }
@@ -198,6 +198,7 @@
   .container { padding-inline: 24px; }
   .section { padding-block: 64px; }
   .header-inner { height: 76px; }
+  .site-brand { font-size: 28px; gap: 10px; }
   .header-actions { gap: 12px; }
   .hero { padding-top: 46px; }
   .hero-grid { grid-template-columns: 1fr; gap: 38px; }
@@ -209,15 +210,22 @@
   .art-input { left: 35px; }
   .art-output { right: 35px; }
 }
+@media (max-width: 640px) {
+  .header-inner { display: grid; grid-template-columns: minmax(0, 1fr) auto; height: auto; padding-block: 6px; column-gap: 12px; row-gap: 0; }
+  .header-actions { display: contents; }
+  .header-actions nav { grid-column: 1 / -1; grid-row: 2; }
+  .header-actions nav ul { justify-content: space-between; }
+  .header-actions .theme-toggle { grid-column: 2; grid-row: 1; width: 44px; height: 44px; }
+  .nav-link { padding: 8px 12px; }
+}
 @media (max-width: 480px) {
   .container { padding-inline: 22px; }
   .site-brand { font-size: 27px; gap: 8px; }
   .brand-mark { width: 23px; height: 23px; }
-  .header-inner { height: 70px; gap: 10px; }
-  .header-actions { gap: 5px; }
-  .nav-link { padding: 12px 8px; font-size: 12px; }
+  .header-inner { column-gap: 10px; }
+  .nav-link { padding: 10px 8px; font-size: 12px; }
   .nav-contact { margin-left: 3px; padding: 8px 10px; }
-  .theme-toggle { width: 36px; height: 36px; border: 0; }
+  .theme-toggle { border: 0; }
   .hero { padding-top: 40px; }
   .hero-title { font-size: clamp(42px, 10.9vw, 52px); }
   .hero-intro { margin-top: 23px; font-size: 15px; }

@@ -1,8 +1,10 @@
 import Link from "next/link";
 import type { CSSProperties } from "react";
 import type { Project } from "@/lib/data/types";
+import { ProjectCardPreview } from "./ProjectCardPreview";
 
 import "./projects.css";
+import "./project-cards.css";
 
 export function status(project: Project) {
   if (project.liveUrl) return { text: "Available live", live: true, statusClass: "dot" };
@@ -119,19 +121,38 @@ function ProjectLinks({ project }: { project: Project }) {
 }
 
 export function ProjectTile({ project }: { project: Project }) {
+  const { text, statusClass } = status(project);
+
   return (
-    <article className="project-tile">
-      <Link href={`/work/${project.slug}`} className="project-cover-link" aria-label={`Explore ${project.name}`}>
-        <ProjectArtwork project={project} />
-        <span className="project-cover-action"><ProjectArrow /></span>
+    <article className="project-card">
+      <Link href={`/work/${project.slug}`} className="project-card-cover" aria-label={`Explore ${project.name}`}>
+        <ProjectCardPreview project={project} />
       </Link>
-      <div className="project-tile-content">
-        <div className="project-title-row">
-          <h3><Link href={`/work/${project.slug}`}>{project.name}</Link></h3>
+      <div className="project-card-content">
+        <div className="project-card-meta">
           <span>{project.kind}</span>
+          <span className="project-card-status"><span aria-hidden="true" className={statusClass} />{text}</span>
         </div>
-        <p className="project-summary">{project.summary}</p>
-        <ProjectLinks project={project} />
+        <h3 className="project-card-title"><Link href={`/work/${project.slug}`}>{project.name}</Link></h3>
+        <p className="project-card-description">{project.summary}</p>
+        <ul className="project-card-tags" aria-label={`${project.name} technologies`}>
+          {project.tags.map((tag) => <li key={tag}>{tag}</li>)}
+        </ul>
+        <div className="project-card-actions">
+          <Link href={`/work/${project.slug}`} className="project-card-primary" aria-label={`Explore ${project.name} project`}>
+            Explore project <ProjectArrow />
+          </Link>
+          {project.liveUrl ? (
+            <a href={project.liveUrl} target="_blank" rel="noreferrer noopener" aria-label={`Visit ${project.name} live site`}>
+              Live app <ProjectArrow direction="external" />
+            </a>
+          ) : null}
+          {project.codeUrl ? (
+            <a href={project.codeUrl} target="_blank" rel="noreferrer noopener" aria-label={`View ${project.name} source code`}>
+              Source <ProjectArrow direction="external" />
+            </a>
+          ) : null}
+        </div>
       </div>
     </article>
   );

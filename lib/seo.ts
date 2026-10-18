@@ -45,8 +45,8 @@ function createStructuredData(
     {
       "@type": "WebSite",
       "@id": websiteId,
-      name: `${site.alias} — ${site.name}`,
-      alternateName: site.domain,
+      name: site.name,
+      alternateName: [site.alias, site.domain],
       url: homeUrl,
       inLanguage: "en",
       publisher: { "@id": personId },
@@ -100,17 +100,17 @@ export function getPageMetadata(pathname: string): PageMetadata {
 
   if (path !== "/" && path !== "/work" && !project) {
     return {
-      title: `Page not found — ${site.alias} (${site.name})`,
-      description: "This page could not be found. Explore Ankit Kumar’s software projects or return to the deblomper homepage.",
+      title: `Page not found — ${site.name}`,
+      description: "This page could not be found. Explore Ankit Kumar’s software projects or return to the homepage.",
       robots: "noindex, follow",
     };
   }
 
   const title = project
-    ? `${project.name} — ${project.kind} | ${site.alias}`
+    ? `${project.name} — ${project.kind} | ${site.name}`
     : path === "/work"
-      ? `Projects — ${site.alias} (${site.name})`
-      : `${site.alias} — ${site.name} | Full-stack Developer`;
+      ? `Projects — ${site.name}`
+      : `${site.name} (${site.alias}) — Full-stack Developer`;
   const description = project
     ? project.summary
     : path === "/work"
@@ -148,9 +148,9 @@ export function renderPageMetadata(pathname: string): string {
     meta("name", "description", metadata.description),
     meta("name", "robots", metadata.robots),
     meta("name", "author", site.name),
-    meta("name", "application-name", site.alias),
+    meta("name", "application-name", site.name),
     meta("property", "og:type", "website"),
-    meta("property", "og:site_name", `${site.alias} — ${site.name}`),
+    meta("property", "og:site_name", site.name),
     meta("property", "og:title", metadata.title),
     meta("property", "og:description", metadata.description),
     meta("property", "og:locale", "en_US"),
