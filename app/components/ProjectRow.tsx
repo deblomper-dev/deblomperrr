@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { CSSProperties } from "react";
 import type { Project } from "@/lib/data/types";
 import { ProjectCardPreview } from "./ProjectCardPreview";
+import { ProjectCardDepth } from "./ProjectCardDepth";
 
 import "./projects.css";
 import "./project-cards.css";
@@ -124,7 +125,7 @@ export function ProjectTile({ project }: { project: Project }) {
   const { text, statusClass } = status(project);
 
   return (
-    <article className="project-card">
+    <ProjectCardDepth>
       <Link href={`/work/${project.slug}`} className="project-card-cover" aria-label={`Explore ${project.name}`}>
         <ProjectCardPreview project={project} />
       </Link>
@@ -154,7 +155,7 @@ export function ProjectTile({ project }: { project: Project }) {
           ) : null}
         </div>
       </div>
-    </article>
+    </ProjectCardDepth>
   );
 }
 
