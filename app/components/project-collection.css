@@ -1,0 +1,38 @@
+.project-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 32px;
+  padding-bottom: 24px;
+}
+
+.project-filters button {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  padding-block: 8px;
+  border-bottom: 2px solid transparent;
+  color: var(--ink-muted);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.project-filters button > span {
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-faint);
+}
+
+.project-filters button[aria-pressed="true"] {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .project-filters button:hover { color: var(--ink); }
+}
+
+@media (max-width: 480px) {
+  .project-filters { gap: 4px 18px; }
+  .project-filters button { gap: 6px; font-size: 12px; }
+}

@@ -1,0 +1,124 @@
+/* Explanatory motion follows the Nub Coders diagrams; the card owns playback. */
+.card-motion-item {
+  pointer-events: none;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+  animation-play-state: paused;
+}
+
+.card-motion-packet {
+  fill: none;
+  stroke: var(--card-accent);
+  stroke-width: 2.8;
+  stroke-linecap: round;
+  stroke-dasharray: 3 97;
+  stroke-dashoffset: 0;
+  animation-name: card-motion-trace;
+  animation-duration: 3.2s;
+}
+
+.card-motion-stage {
+  opacity: 1;
+  animation-name: card-motion-stage-pulse;
+  animation-duration: 4.8s;
+  animation-timing-function: var(--ease-in-out);
+}
+
+.card-motion-deploy-scan,
+.card-motion-playhead,
+.card-motion-api-scan {
+  fill: none;
+  stroke: var(--card-accent);
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  opacity: 0;
+}
+
+.card-motion-deploy-scan {
+  animation-name: card-motion-deploy-scan;
+  animation-duration: 3.2s;
+}
+
+.card-motion-mail-letter {
+  animation-name: card-motion-mail-delivery;
+  animation-duration: 3.8s;
+}
+
+.card-motion-playhead {
+  animation-name: card-motion-playhead;
+  animation-duration: 3.6s;
+}
+
+.card-motion-record {
+  fill: none;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation-name: card-motion-record-spin;
+  animation-duration: 12s;
+}
+
+.card-motion-equalizer {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation-name: card-motion-equalizer;
+  animation-duration: 1.6s;
+  animation-timing-function: var(--ease-in-out);
+}
+
+.card-motion-api-scan {
+  animation-name: card-motion-api-scan;
+  animation-duration: 3.6s;
+}
+
+.project-card.diagram-in-view .card-motion-item {
+  animation-play-state: running;
+}
+
+@keyframes card-motion-trace {
+  from { stroke-dashoffset: 0; }
+  to { stroke-dashoffset: -100; }
+}
+
+@keyframes card-motion-stage-pulse {
+  0%, 15% { opacity: 1; }
+  25%, 100% { opacity: 0.35; }
+}
+
+@keyframes card-motion-deploy-scan {
+  0% { transform: translateX(0); opacity: 0; }
+  12%, 88% { opacity: 0.6; }
+  100% { transform: translateX(120px); opacity: 0; }
+}
+
+@keyframes card-motion-mail-delivery {
+  0% { transform: translateY(8px); opacity: 0; }
+  18%, 70% { opacity: 1; }
+  100% { transform: translateY(-10px); opacity: 0; }
+}
+
+@keyframes card-motion-playhead {
+  0% { transform: translateX(0); opacity: 0; }
+  12%, 88% { opacity: 0.6; }
+  100% { transform: translateX(124px); opacity: 0; }
+}
+
+@keyframes card-motion-record-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes card-motion-equalizer {
+  0%, 100% { transform: scaleY(0.5); }
+  50% { transform: scaleY(1); }
+}
+
+@keyframes card-motion-api-scan {
+  0% { transform: translateY(0); opacity: 0; }
+  12%, 88% { opacity: 0.6; }
+  100% { transform: translateY(70px); opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card-motion-item { animation: none !important; transform: none; opacity: 1; }
+  .card-motion-overlay { display: none; }
+}

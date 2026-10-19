@@ -19,7 +19,7 @@ function ScrollToTopAndHash() {
       const timer = setTimeout(() => {
         const el = document.getElementById(targetId);
         if (el) {
-          el.scrollIntoView({ behavior: "smooth" });
+          el.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth" });
         }
       }, 50);
       return () => clearTimeout(timer);

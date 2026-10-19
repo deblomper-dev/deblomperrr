@@ -21,7 +21,6 @@ function Block({ className, children }: { className: string; children?: ReactNod
 export function SystemModel({ label }: { label: string }) {
   const viewportRef = useRef<HTMLDivElement>(null);
   const rotationRef = useRef<HTMLDivElement>(null);
-  const resetRef = useRef<(immediate: boolean) => void>(() => {});
 
   useEffect(() => {
     const viewport = viewportRef.current;
@@ -73,7 +72,6 @@ export function SystemModel({ label }: { label: string }) {
       target = { ...initialView };
       update(immediate);
     };
-    resetRef.current = reset;
 
     const endDrag = () => {
       if (drag && viewport.hasPointerCapture(drag.id)) viewport.releasePointerCapture(drag.id);
@@ -136,7 +134,6 @@ export function SystemModel({ label }: { label: string }) {
       endDrag();
       stop();
       observer.disconnect();
-      resetRef.current = () => {};
       viewport.removeEventListener("pointerdown", pointerDown);
       viewport.removeEventListener("pointermove", pointerMove);
       viewport.removeEventListener("pointerup", endDrag);
@@ -185,11 +182,6 @@ export function SystemModel({ label }: { label: string }) {
             </div>
           </div>
         </div>
-      </div>
-      <div className="model-tools">
-        <span className="model-drag-hint"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M3 10h14M10 3v14M6 7l-3 3 3 3m8-6 3 3-3 3M7 6l3-3 3 3m-6 8 3 3 3-3" /></svg>Drag to rotate</span>
-        <span className="model-static-hint">Built layer by layer</span>
-        <button type="button" onClick={(event) => resetRef.current(event.detail === 0)} aria-label="Reset 3D model view">Reset view <span aria-hidden="true">↺</span></button>
       </div>
     </div>
   );

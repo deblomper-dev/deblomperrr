@@ -18,6 +18,15 @@ export function ProjectCardDepth({ children }: { children: ReactNode }) {
     let frame = 0;
     let pointerX = 0;
     let pointerY = 0;
+    let inView = false;
+
+    const syncPlayback = () => card.classList.toggle("diagram-in-view", inView && !document.hidden);
+    const observer = new IntersectionObserver(([entry]) => {
+      inView = entry.isIntersecting;
+      syncPlayback();
+    }, { threshold: 0.05 });
+    observer.observe(cover);
+    document.addEventListener("visibilitychange", syncPlayback);
 
     const canAnimate = () => finePointer.matches && !reducedMotion.matches && !document.hidden;
 
@@ -25,7 +34,7 @@ export function ProjectCardDepth({ children }: { children: ReactNode }) {
       cancelAnimationFrame(frame);
       frame = 0;
       card!.removeAttribute("data-depth-active");
-      for (const element of [card!, preview!, diagram!]) {
+      for (const element of [preview!, diagram!]) {
         element.style.removeProperty("transform");
         element.style.removeProperty("will-change");
       }
@@ -40,10 +49,9 @@ export function ProjectCardDepth({ children }: { children: ReactNode }) {
       const y = Math.max(-1, Math.min(1, ((pointerY - bounds.top) / bounds.height - 0.5) * 2));
 
       card!.dataset.depthActive = "true";
-      card!.style.transform = "translate3d(0, -3px, 0)";
-      preview!.style.transform = `rotateX(${(-y * 4).toFixed(2)}deg) rotateY(${(x * 6).toFixed(2)}deg)`;
+      preview!.style.transform = `translate3d(0, -3px, 0) rotateX(${(-y * 4).toFixed(2)}deg) rotateY(${(x * 6).toFixed(2)}deg)`;
       diagram!.style.transform = `translate3d(${(x * 3).toFixed(2)}px, ${(y * 2).toFixed(2)}px, 24px)`;
-      for (const element of [card!, preview!, diagram!]) {
+      for (const element of [preview!, diagram!]) {
         element.style.willChange = "transform";
       }
     }
@@ -71,6 +79,9 @@ export function ProjectCardDepth({ children }: { children: ReactNode }) {
 
     return () => {
       reset();
+      observer.disconnect();
+      card.classList.remove("diagram-in-view");
+      document.removeEventListener("visibilitychange", syncPlayback);
       cover.removeEventListener("pointerenter", track);
       cover.removeEventListener("pointermove", track);
       cover.removeEventListener("pointerleave", reset);
@@ -83,5 +94,9 @@ export function ProjectCardDepth({ children }: { children: ReactNode }) {
     };
   }, []);
 
-  return <article ref={cardRef} className="project-card">{children}</article>;
+  return (
+    <article ref={cardRef} className="project-card">
+      {children}
+    </article>
+  );
 }

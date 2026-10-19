@@ -1,0 +1,15 @@
+.project-row-band { padding-block: 42px; background: var(--bone-2); }
+.project-row-band:nth-child(even) { background: var(--accent-soft); }
+.project-row-cell { min-width: 0; }
+.project-row-cell > .reveal { height: 100%; }
+
+@media (max-width: 640px) {
+  .project-row-band,
+  .project-row-band:nth-child(even) { padding-block: 0; background: transparent; }
+  .project-rows .project-grid { padding-inline: 0; gap: 0; }
+  .project-row-cell { padding: 32px 24px; background: var(--bone-2); }
+  .project-row-cell:nth-child(even) { background: var(--accent-soft); }
+}
+@media (max-width: 480px) {
+  .project-row-cell { padding-inline: 22px; }
+}

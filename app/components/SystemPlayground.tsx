@@ -13,7 +13,6 @@ const systems = [
 
 export function SystemPlayground() {
   const [active, setActive] = useState(0);
-  const [paused, setPaused] = useState(false);
   const [keyboardSelection, setKeyboardSelection] = useState(false);
   const playgroundRef = useRef<HTMLDivElement>(null);
   const system = systems[active];
@@ -36,14 +35,9 @@ export function SystemPlayground() {
   }, []);
 
   return (
-    <div ref={playgroundRef} className="system-playground" data-system={system.mark} data-paused={paused} data-keyboard-selection={keyboardSelection}>
+    <div ref={playgroundRef} className="system-playground" data-system={system.mark} data-keyboard-selection={keyboardSelection}>
       <div className="playground-top">
-        <span>A few things I build<span className="playground-dimension"> / IN 3D</span></span>
-        <button type="button" className="motion-toggle" onClick={() => setPaused((value) => !value)} aria-pressed={paused} aria-label={paused ? "Play illustration animation" : "Pause illustration animation"}>
-          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            {paused ? <path d="m9 5 10 7-10 7V5Z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" /> : <path d="M9 6v12M15 6v12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />}
-          </svg>
-        </button>
+        <span>How the pieces fit</span>
       </div>
       <div className="system-stage">
         <SystemModel label={system.label} />
@@ -55,7 +49,7 @@ export function SystemPlayground() {
           <span className="system-selection" aria-hidden="true" />
           {systems.map((item, i) => <button key={item.slug} type="button" aria-pressed={active === i} onClick={(event) => { setKeyboardSelection(event.detail === 0); setActive(i); }}>{item.name}</button>)}
         </div>
-        <div className="system-description" aria-live="polite" aria-atomic="true"><p>{system.detail}</p><Link href={`/work/${system.slug}`} aria-label={`Explore ${system.name}`}><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg></Link></div>
+        <div className="system-description" aria-live="polite" aria-atomic="true"><p>{system.detail}</p><Link href={`/work/${system.slug}`}><span>Explore {system.name}</span><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg></Link></div>
       </div>
     </div>
   );

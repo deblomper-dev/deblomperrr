@@ -32,17 +32,15 @@
   .hero-copy:focus-within .hero-actions { animation: none; }
 
   .reveal-heading {
-    transition: opacity 600ms var(--ease-out), transform 600ms var(--ease-out), clip-path 600ms var(--ease-out);
+    transition: opacity 600ms var(--ease-out), transform 600ms var(--ease-out);
   }
   .reveal-heading.reveal-ready:not(.is-visible) {
-    clip-path: inset(0 0 100% 0);
     transform: translateY(18px);
   }
-  .reveal-heading.is-visible { clip-path: inset(0); }
   .reveal-horizontal.reveal-ready:not(.is-visible) { transform: translateX(24px); }
-  .reveal-wipe { transition: opacity 500ms var(--ease-out), clip-path 600ms var(--ease-out); }
-  .reveal-wipe.reveal-ready:not(.is-visible) { transform: none; clip-path: inset(0 100% 0 0); }
-  .reveal-wipe.is-visible { clip-path: inset(0); }
+  /* Fully clipping an observed target prevents its intersection from firing. */
+  .reveal-wipe { transition: opacity 500ms var(--ease-out); }
+  .reveal-wipe.reveal-ready:not(.is-visible) { transform: none; }
   .principle-item:nth-child(2), .stack-row:nth-child(2) { transition-delay: 60ms; }
   .principle-item:nth-child(3), .stack-row:nth-child(3) { transition-delay: 120ms; }
   .stack-row:nth-child(n + 4) { transition-delay: 180ms; }

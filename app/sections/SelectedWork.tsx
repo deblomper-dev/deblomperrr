@@ -1,6 +1,7 @@
 import Link from "next/link";
 
-import { ProjectArrow, ProjectTile } from "@/app/components/ProjectRow";
+import { ProjectArrow } from "@/app/components/ProjectRow";
+import { ProjectRows } from "@/app/components/ProjectRows";
 import { featuredProjects, projects } from "@/lib/data/projects";
 
 export function SelectedWork() {
@@ -11,13 +12,9 @@ export function SelectedWork() {
           <h2 id="work-label">Selected work<span className="work-heading-dot">.</span></h2>
           <p>Ideas turned into tools.<br />Built, shipped, and kept running.</p>
         </div>
-        <div className="project-grid">
-          {featuredProjects.map((project) => (
-            <div key={project.slug} className="reveal">
-              <ProjectTile project={project} />
-            </div>
-          ))}
-        </div>
+      </div>
+      <ProjectRows projects={featuredProjects} label="Selected projects" />
+      <div className="container">
         <div className="work-section-footer">
           <p>A few things I&apos;ve made. There&apos;s more in the collection.</p>
           <Link href="/work" className="work-all-link">

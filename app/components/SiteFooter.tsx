@@ -9,9 +9,12 @@ export function SiteFooter() {
     <footer className="site-footer">
       <div className="container">
         <div className="footer-topline reveal">
-          <Link href="/#top" className="footer-name" aria-label={`${site.name}, back to top`}>
-            {site.name}<span aria-hidden="true">.</span>
-          </Link>
+          <div className="footer-signature">
+            <Link href="/#top" className="footer-name" aria-label={`${site.name}, back to top`}>
+              {site.name}<span aria-hidden="true">.</span>
+            </Link>
+            <p>{site.role}, building under {site.alias}.</p>
+          </div>
           <Link href="/#top" className="footer-back">
             Back to top
             <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">

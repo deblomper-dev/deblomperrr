@@ -1,4 +1,7 @@
 /* Project covers are abstract depictions of the work, with deliberately fixed ink and paper colors. */
+.selected-work,
+.work-index-page { --section-background: var(--section-work); }
+
 .work-section-heading {
   display: flex;
   align-items: flex-end;
@@ -9,7 +12,7 @@
 
 .work-section-heading h2 {
   font-family: var(--font-display), sans-serif;
-  font-size: clamp(2.5rem, 4.5vw, 3.8rem);
+  font-size: clamp(3rem, 5.4vw, 4.5rem);
   font-weight: 650;
   line-height: 1.05;
   letter-spacing: -0.04em;
@@ -361,16 +364,32 @@
   font-size: 0.875rem;
 }
 
-.project-index-list {
-  border-top: 1px solid var(--rule-strong);
-}
-
 .project-index-row {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 220px;
   gap: 48px;
   padding-block: 30px;
-  border-bottom: 1px solid var(--rule);
+}
+
+.project-index-list > .project-index-row {
+  position: relative;
+  isolation: isolate;
+}
+
+.project-index-list > .project-index-row::before {
+  content: "";
+  position: absolute;
+  inset-block: 0;
+  left: 50%;
+  width: 100vw;
+  transform: translateX(-50%);
+  z-index: -1;
+  background: var(--bone-2);
+  pointer-events: none;
+}
+
+.project-index-list > .project-index-row:nth-child(even)::before {
+  background: var(--accent-soft);
 }
 
 .project-index-row .project-title-row {
@@ -1030,3 +1049,6 @@
     transform: rotate(-3deg);
   }
 }
+
+.project-detail-cover { border-radius: 0; }
+.project-detail-cover .project-artwork { background: transparent; }

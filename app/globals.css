@@ -10,6 +10,12 @@
   --ink-faint: #626671;
   --accent: #2947e8;
   --accent-soft: #e9ecfc;
+  --section-hero: #f6efdf;
+  --section-work: #f5f6fa;
+  --section-approach: #e3ebdb;
+  --section-about: #f3e1d5;
+  --section-contact: #e1e6f8;
+  --section-footer: #d8ddeb;
   --rule: #d9dbd4;
   --rule-strong: #a5a9b4;
   --live-green: #438451;
@@ -35,6 +41,12 @@
   --ink-faint: #a9b1c7;
   --accent: #a2b1ff;
   --accent-soft: #2b3554;
+  --section-hero: #20263a;
+  --section-work: #171c2b;
+  --section-approach: #1c332e;
+  --section-about: #362830;
+  --section-contact: #27355a;
+  --section-footer: #111827;
   --rule: #394057;
   --rule-strong: #68738c;
   --live-green: #a4d4ad;
@@ -111,7 +123,7 @@
   .theme-icon-dark { display: none; }
   [data-theme="dark"] .theme-icon-light { display: none; }
   [data-theme="dark"] .theme-icon-dark { display: block; }
-  .hero { padding-top: 66px; }
+  .hero { --section-background: var(--section-hero); padding-top: 66px; }
   .hero-grid { display: grid; grid-template-columns: 1.12fr 1fr; gap: 54px; align-items: center; }
   .hero-title { font-size: clamp(54px, 5.6vw, 78px); line-height: 1.06; font-weight: 750; color: var(--accent); letter-spacing: -0.04em; }
   .hero-title > span { display: block; animation: headline-enter 700ms var(--ease-out) backwards; }
@@ -194,4 +206,27 @@
   .reveal-ready:not(.is-visible) { opacity: 1; transform: none; }
   .reveal { transition: opacity 180ms ease; }
   .btn-press:active, .primary-button:active { transform: none; }
+}
+
+#main { overflow: clip; }
+
+/* Color follows each full-width section, with text tones derived from its surface. */
+.hero,
+.selected-work,
+.work-index-page,
+.approach-section,
+.about-section,
+.contact-section,
+.site-footer {
+  background: var(--section-background);
+}
+
+.hero,
+.approach-section,
+.about-section,
+.contact-section,
+.site-footer {
+  --ink-muted: color-mix(in srgb, var(--ink) 76%, var(--section-background));
+  --ink-faint: color-mix(in srgb, var(--ink) 70%, var(--section-background));
+  --rule: color-mix(in srgb, var(--ink) 18%, var(--section-background));
 }

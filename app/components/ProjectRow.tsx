@@ -141,7 +141,7 @@ export function ProjectTile({ project }: { project: Project }) {
         </ul>
         <div className="project-card-actions">
           <Link href={`/work/${project.slug}`} className="project-card-primary" aria-label={`Explore ${project.name} project`}>
-            Explore project <ProjectArrow />
+            Explore project <span className="project-card-action-icon"><ProjectArrow /></span>
           </Link>
           {project.liveUrl ? (
             <a href={project.liveUrl} target="_blank" rel="noreferrer noopener" aria-label={`Visit ${project.name} live site`}>
