@@ -6,7 +6,7 @@ metadata, and structured data in the initial HTML. React hydrates that content
 and updates metadata during client navigation.
 
 `lib/seo.ts` associates Ankit Kumar with the public alias `deblomper` and the real
-GitHub handle `deblomperrr`. Keep this identity consistent when editing profile
+GitHub handle `deblomper-dev`. Keep this identity consistent when editing profile
 copy or public social profiles.
 
 **Build and verify**

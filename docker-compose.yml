@@ -18,7 +18,7 @@ services:
       - EMAIL_TO=${EMAIL_TO:-contact@deblomper.dev}
       - TURNSTILE_SECRET_KEY=${TURNSTILE_SECRET_KEY}
       - GITHUB_TOKEN=${GITHUB_TOKEN}
-      - GITHUB_USERNAME=${GITHUB_USERNAME:-deblomperrr}
+      - GITHUB_USERNAME=${GITHUB_USERNAME:-deblomper-dev}
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.deblomperr-portfolio.rule=Host(`${VIRTUAL_HOST:-deblomper.dev}`)"

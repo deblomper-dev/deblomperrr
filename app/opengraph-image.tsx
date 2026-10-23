@@ -67,7 +67,7 @@ export default async function Image() {
             Ankit Kumar
           </span>
           <span style={{ fontSize: 18, color: "#726c61" }}>
-            github.com/deblomperrr — deblomper.dev
+            github.com/deblomper-dev — deblomper.dev
           </span>
         </div>
       </div>

@@ -39,6 +39,7 @@ export const metadata: Metadata = {
   creator: site.name,
   keywords: [
     "Ankit Kumar",
+    "deblomper-dev",
     "deblomperrr",
     "deblomperr",
     "Systems Engineer",

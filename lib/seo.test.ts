@@ -21,8 +21,8 @@ test("the home page names Ankit Kumar and connects his aliases and real social a
   const person = graph.find((node) => node["@type"] === "Person");
   assert.ok(person);
   assert.equal(person.name, "Ankit Kumar");
-  assert.deepEqual(person.alternateName, ["deblomper", "deblomperr", "deblomperrr"]);
-  assert.ok((person.sameAs as string[]).includes("https://github.com/deblomperrr"));
+  assert.deepEqual(person.alternateName, ["deblomper", "deblomperr", "deblomperrr", "deblomper-dev"]);
+  assert.ok((person.sameAs as string[]).includes("https://github.com/deblomper-dev"));
   const website = graph.find((node) => node["@type"] === "WebSite");
   assert.equal(website?.name, "Ankit Kumar");
   assert.deepEqual(website?.alternateName, ["deblomper", "deblomper.dev"]);

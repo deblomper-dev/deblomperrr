@@ -51,7 +51,7 @@ export function normalizeGitHubUsername(username: string): string {
 }
 
 function defaultUsername(): string {
-  return normalizeGitHubUsername(process.env.GITHUB_USERNAME || "nub-coders");
+  return normalizeGitHubUsername(process.env.GITHUB_USERNAME || "deblomper-dev");
 }
 
 function reserveRequest(username: string): () => void {

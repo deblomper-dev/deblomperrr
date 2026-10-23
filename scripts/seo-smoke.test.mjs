@@ -209,7 +209,7 @@ test("homepage explicitly associates deblomper with Ankit Kumar", () => {
   assert.ok(person, "Profile has Person structured data");
   assert.equal(person.name, "Ankit Kumar");
   assert.ok([].concat(person.alternateName ?? []).some((name) => /^deblomper$/i.test(name)));
-  assert.ok([].concat(person.sameAs ?? []).includes("https://github.com/deblomperrr"));
+  assert.ok([].concat(person.sameAs ?? []).includes("https://github.com/deblomper-dev"));
 });
 
 test("sitemap includes the full linked project collection and robots advertises it", async () => {
